@@ -17,23 +17,20 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', functio
     };
 
     $scope.initEvents = function () {
-        $http.get('http://localhost:5000/reservations').
-            then(function(response) {
-                $scope.saveEvents(response.data);
-        });
+        $http.get('http://localhost:5000/reservations')
+            .then(function(response) {
+                $scope.displayEvents(response.data);
+            }
+        );
     }
 
-    $scope.saveEvents = function (events) {
+    $scope.displayEvents = function (events) {
         var allEvents = [];
         for(var i = 0; i < events.length; i++){
             var data = events[i];
-            allEvents.push({ id: data.id, title: data.title, startTime: new Date(data.start_date), endTime: new Date(data.end_date), allDay: data.all_day, description: data.description, userId: data.user_id });
+            allEvents.push({ id: data.id, title: data.title, startTime: new Date(data.startTime), endTime: new Date(data.endTime), allDay: data.allDay, description: data.description, userId: data.userId });
         }
         $rootScope.eventSource = allEvents;
-        $scope.loadEvents();
-    }
-
-    $scope.loadEvents = function () {
         $scope.eventSource = $rootScope.eventSource;
     };
 
@@ -53,16 +50,28 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', functio
     };
 
     $scope.addEvent = function() {
-        console.log($scope.title + " " + $scope.startDate + " " + $scope.endDate);
+        var allDay = false;
+        if( $scope.allDay ){
+            allDay = true;
+        }
+        var event = { title: $scope.title, startTime: new Date($scope.startDate), endTime: new Date($scope.endDate), allDay: allDay, description: $scope.description, userId: 1};
+        $http.post('http://localhost:5000/reservations',JSON.stringify(event))
+            .then(function(response) {
+                event.id = response.data.id;
+                $scope.addEventLocally(event);
+            }
+        );
+    };
+
+    $scope.addEventLocally= function(event) {
         var events = $rootScope.eventSource;
         if( events == null || events == undefined ){
             events = [];
         }
-        events.push({id: $rootScope.nextId, title: $scope.title, startTime: new Date($scope.startDate), endTime: new Date($scope.endDate), allDay: false});
-        $rootScope.nextId = $rootScope.nextId + 1;
+        events.push(event);
         $rootScope.eventSource = events;
-        console.log(events);
-    };
+        $scope.eventSource = events;
+    }
 
 }]);
 

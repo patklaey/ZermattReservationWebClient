@@ -54,10 +54,10 @@
 
 	    	<div class="footer" ng-controller="CalendarCtrl">
 			<form action="/" id="addEvent">
-				Title: <input type="text" id="title" ng-model="title"><br>
-				Start Date: <input type="text" id="startDate" ng-model="startDate"><br>
+				Title: <input type="text" id="title" ng-model="title"> Description: <input type="text" id="description" ng-model="description"><br>
+				Start Date: <input type="text" id="startDate" ng-model="startDate">AllDay <input type="checkbox" name="allDay" value="allDay" ng-model="allDay"><br>
 				End Date: <input type="text" id="endDate" ng-model="endDate"><br>
-				<button type="button" class"btn btn-default" ng-click="addEvent()">Submit</button>
+				<button type="button" class="btn btn-default" ng-click="addEvent()">Submit</button>
 			</form>
 		</div>
 		</div>
