@@ -1,5 +1,12 @@
 var myAppModule = angular.module('App', ['ui.rCalendar']);
-myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', function ($scope, $rootScope) {
+
+myAppModule.config(['$httpProvider', function($httpProvider) {
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    }
+]);
+
+myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', function ($scope, $rootScope, $http) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -9,12 +16,21 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', function ($scope
         $scope.currentDate = new Date();
     };
 
-    $scope.initEvent = function () {
-        var events = [];
-        events.push({ id: 1, title: "My event #1", startTime: new Date("December 12, 2016 12:00:00"), endTime: new Date("December 13, 2016 12:00:00"), allDay: false});
-        $rootScope.eventSource = events;
-        $rootScope.nextId = 2;
-	$scope.loadEvents();
+    $scope.initEvents = function () {
+        $http.get('http://localhost:5000/reservations').
+            then(function(response) {
+                $scope.saveEvents(response.data);
+        });
+    }
+
+    $scope.saveEvents = function (events) {
+        var allEvents = [];
+        for(var i = 0; i < events.length; i++){
+            var data = events[i];
+            allEvents.push({ id: data.id, title: data.title, startTime: new Date(data.start_date), endTime: new Date(data.end_date), allDay: data.all_day, description: data.description, userId: data.user_id });
+        }
+        $rootScope.eventSource = allEvents;
+        $scope.loadEvents();
     }
 
     $scope.loadEvents = function () {
@@ -31,24 +47,21 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', function ($scope
     };
 
     $scope.onEventSelected = function (event) {
-        $scope.event = event;
     };
 
     $scope.onTimeSelected = function (selectedTime) {
-        console.log('Selected time: ' + selectedTime);
-	console.log($scope.eventSource);
     };
 
     $scope.addEvent = function() {
         console.log($scope.title + " " + $scope.startDate + " " + $scope.endDate);
         var events = $rootScope.eventSource;
-	if( events == null || events == undefined ){
-		events = [];
-	}
-	events.push({id: $rootScope.nextId, title: $scope.title, startTime: new Date($scope.startDate), endTime: new Date($scope.endDate), allDay: false});
-	$rootScope.nextId = $rootScope.nextId + 1;
-	$rootScope.eventSource = events;
-	console.log(events);
+        if( events == null || events == undefined ){
+            events = [];
+        }
+        events.push({id: $rootScope.nextId, title: $scope.title, startTime: new Date($scope.startDate), endTime: new Date($scope.endDate), allDay: false});
+        $rootScope.nextId = $rootScope.nextId + 1;
+        $rootScope.eventSource = events;
+        console.log(events);
     };
 
 }]);

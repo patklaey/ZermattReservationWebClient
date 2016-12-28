@@ -19,7 +19,7 @@
                 </form>
             </div>
 
-	    	<div ng-controller="CalendarCtrl" class="calendar">
+	    	<div ng-controller="CalendarCtrl" class="calendar" ng-init="initEvents()">
 			<div class="btn-toolbar">
                 		<div class="btn-group">
                 		    <button type="button" class="btn btn-default" ng-class="{active:mode==='month'}"
