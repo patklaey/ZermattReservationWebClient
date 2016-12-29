@@ -1,16 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 
-	<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.8/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-aria.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-messages.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-sanitize.min.js"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
+    <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
 
-	<body>
+    <link rel="stylesheet" href="./libs/bootstrap/dist/css/bootstrap.css"/>
+    <link rel="stylesheet" href="./css/calendar.css"/>
+    <script src="./js/calendar.js"></script>
+    <script src="./js/calendar-app.js"></script>
 
-		<link rel="stylesheet" href="./bootstrap/dist/css/bootstrap.css"/>
-		<link rel="stylesheet" href="./css/calendar.css"/>
-		<script src="./js/calendar.js"></script>
-		<script src="./js/calendar-app.js"></script>
+    <link rel="stylesheet" href="./libs/ngToast/dist/ngToast.min.css">
+    <script src="./libs/ngToast/dist/ngToast.min.js"></script>
 
-		<div class="App" ng-app="App">
+    <body>
+        <div class="App" ng-app="App">
             <div class="header" ng-controller="loginController">
                 <form action="/" id="login">
                     Username: <input type="text" id="username" ng-model="username">
@@ -18,6 +26,7 @@
                     <button type="button" class="btn btn-default" ng-click="login()">Login</button>
                 </form>
             </div>
+            <toast></toast>
 
 	    	<div ng-controller="CalendarCtrl" class="calendar" ng-init="initEvents()">
                 <div class="btn-toolbar">
@@ -39,6 +48,12 @@
                         <button type="button" class="btn btn-default" ng-disabled="isToday()"
                             ng-click="today()">
                             Today
+                        </button>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default"
+                                ng-click="showErrorToast('this is a test')">
+                            Toast
                         </button>
                     </div>
                 </div>

@@ -1,4 +1,4 @@
-var myAppModule = angular.module('App', ['ui.rCalendar']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast']);
 
 myAppModule.config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -6,7 +6,7 @@ myAppModule.config(['$httpProvider', function($httpProvider) {
     }
 ]);
 
-myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', function ($scope, $rootScope, $http) {
+myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', 'ngToast', function ($scope, $rootScope, $http, $ngToast) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -20,6 +20,8 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', functio
         $http.get('http://localhost:5000/reservations')
             .then(function(response) {
                 $scope.displayEvents(response.data);
+            }, function() {
+                $scope.showErrorToast("Cannot load reservations!");
             }
         );
     }
@@ -63,7 +65,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', functio
         );
     };
 
-    $scope.addEventLocally= function(event) {
+    $scope.addEventLocally = function(event) {
         var events = $rootScope.eventSource;
         if( events == null || events == undefined ){
             events = [];
@@ -73,6 +75,21 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', functio
         $scope.eventSource = events;
     }
 
+    $scope.showInfoToast = function(message) {
+        $ngToast.create(message);
+    }
+
+    $scope.showWarningToast = function(message){
+        $ngToast.warning({
+            content: '<p class="warning-toast">' + message + '</p>'
+        });
+    }
+
+    $scope.showErrorToast = function(message){
+        $ngToast.danger({
+            content: '<p class="error-toast">' + message + '</p>'
+        });
+    }
 }]);
 
 myAppModule.controller('loginController', function($scope) {
