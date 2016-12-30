@@ -6,7 +6,7 @@ myAppModule.config(['$httpProvider', function($httpProvider) {
     }
 ]);
 
-myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', 'ngToast', function ($scope, $rootScope, $http, $ngToast) {
+myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce', 'ngToast', function ($scope, $rootScope, $http, $sce, $ngToast) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -21,7 +21,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', 'ngToas
             .then(function(response) {
                 $scope.displayEvents(response.data);
             }, function() {
-                $scope.showErrorToast("Cannot load reservations!");
+                $scope.showErrorToast("Cannot load reservations, please try again later!");
             }
         );
     }
@@ -81,13 +81,19 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', 'ngToas
 
     $scope.showWarningToast = function(message){
         $ngToast.warning({
-            content: '<p class="warning-toast">' + message + '</p>'
+            content: $sce.trustAsHtml('<div class="warning-toast">' + message + '</div>'),
+            timeout: 5000,
+            dismissOnClick: false,
+            dismissButton: true
         });
     }
 
     $scope.showErrorToast = function(message){
         $ngToast.danger({
-            content: '<p class="error-toast">' + message + '</p>'
+            content: $sce.trustAsHtml('<div class="error-toast">' + message + '</div>'),
+            timeout: 10000,
+            dismissOnClick: false,
+            dismissButton: true
         });
     }
 }]);
