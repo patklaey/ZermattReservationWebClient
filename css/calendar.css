@@ -10,6 +10,7 @@ body {
     height:10%;
     right:0px;
     overflow:hidden;
+    margin:10px;
 }
 
 .calendar {
@@ -33,12 +34,12 @@ body {
 
 .warning-toast {
     margin:5px;
-    padding:10px;
+    padding-right:10px;
 }
 
 .error-toast {
     margin:5px;
-    padding:10px;
+    padding-right:10px;
 }
 
 .nav-left {

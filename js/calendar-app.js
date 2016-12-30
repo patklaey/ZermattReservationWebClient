@@ -1,4 +1,4 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap']);
 
 myAppModule.config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -98,8 +98,31 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     }
 }]);
 
-myAppModule.controller('loginController', function($scope) {
-	$scope.login = function() {
-		alert($scope.username + " " + $scope.password);
+myAppModule.controller('loginController', function($scope, $uibModal, $rootScope) {
+
+	$scope.showLogin = function() {
+		$rootScope.loginModal = $uibModal.open({
+            templateUrl: "./templates/login-modal.html",
+            size: "sm",
+            controller: "loginController"
+		});
 	};
+
+    $scope.cancelLogin = function() {
+        if($rootScope.loginModal){
+            $rootScope.loginModal.dismiss("User canceled");
+        }
+    }
+
+    $scope.authenticate = function() {
+        var username = $scope.username;
+        var password = $scope.password;
+        if( username == 'admin' && password == 'admin'){
+            alert("success");
+            $rootScope.loginModal.close("Successful login");
+        } else {
+            alert("login failed");
+        }
+    }
+
 });

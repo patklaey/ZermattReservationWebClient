@@ -1,0 +1,25 @@
+<div class="modal-header">
+    <h4>Login</h4>
+</div>
+
+<div class="modal-body">
+    <form action="/" id="login">
+        <table>
+            <tbody>
+                <tr>
+                    <td>Username:</td>
+                    <td><input type="text" id="username" ng-model="username"/></td>
+                </tr>
+                <tr>
+                    <td>Password:</td>
+                    <td><input type="password" id="password" ng-model="password"/></td>
+                </tr>
+            </tbody>
+        </table>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-warning" ng-click="cancelLogin()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="authenticate()">Login</button>
+</div>
