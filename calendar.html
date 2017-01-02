@@ -28,9 +28,10 @@
     <body>
         <div class="App" ng-app="App">
             <div class="header" ng-controller="loginController">
-                <button type="button" class="btn btn-default" ng-show="!isAuthenticated()" ng-click="showLogin()">Login</button>
-                <button type="button" class="btn btn-default" ng-show="!isAuthenticated()" ng-click="showRegister()">Sign Up</button>
-                <button type="button" class="btn btn-default" ng-show="isAuthenticated()" ng-click="logout()">Logout</button>
+                <button type="button" class="btn btn-default login-btn" ng-show="!isAuthenticated()" ng-click="showLogin()">Login</button>
+                <button type="button" class="btn btn-default login-btn" ng-show="!isAuthenticated()" ng-click="showRegister()">Sign Up</button>
+                <button type="button" class="btn btn-default login-btn" ng-show="isAuthenticated()" ng-click="logout()">Logout</button>
+                <button type="button" class="btn btn-default" ng-show="isAuthenticated()" ng-click="showReservation()">Add Reservation</button>
             </div>
             <toast></toast>
 

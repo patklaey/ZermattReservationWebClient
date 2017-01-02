@@ -23,6 +23,11 @@ body {
     overflow-y: auto;
 }
 
+.login-btn {
+    float: right;
+    margin:5px;
+}
+
 .warning-toast {
     margin:5px;
     padding-right:10px;
