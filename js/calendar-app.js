@@ -134,7 +134,13 @@ myAppModule.controller('loginController', function($scope, $uibModal, $rootScope
 	$scope.showLogin = function() {
 		$rootScope.loginModal = $uibModal.open({
             templateUrl: "./templates/login-modal.html",
-            size: "sm",
+            controller: "loginController"
+		});
+	};
+
+	$scope.showRegister = function() {
+		$rootScope.registerModal = $uibModal.open({
+            templateUrl: "./templates/register-modal.html",
             controller: "loginController"
 		});
 	};
@@ -144,6 +150,13 @@ myAppModule.controller('loginController', function($scope, $uibModal, $rootScope
             $rootScope.loginModal.dismiss("User canceled");
         }
     }
+
+    $scope.cancelRegister = function() {
+        if($rootScope.registerModal){
+            $rootScope.registerModal.dismiss("User canceled");
+        }
+    }
+
 
     $scope.authenticate = function() {
         var username = $scope.username;

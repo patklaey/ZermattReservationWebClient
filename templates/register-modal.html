@@ -1,0 +1,29 @@
+<div class="modal-header">
+    <h4>Sign Up</h4>
+</div>
+
+<div class="modal-body">
+    <form name="loginForm">
+        <div class="input-group form-group" ng-class="{ 'has-error': loginForm.username.$invalid && loginForm.username.$dirty }">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+            <input id="username" type="text" class="form-control" name="username" placeholder="Username" ng-model="username" required>
+        </div>
+        <div class="input-group form-group" ng-class="{ 'has-error': loginForm.email.$invalid && loginForm.email.$dirty }">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
+            <input id="email" type="email" class="form-control" name="email" placeholder="Email" ng-model="email" required>
+        </div>
+        <div class="input-group form-group" ng-class="{ 'has-error': loginForm.password.$invalid && loginForm.password.$dirty}">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            <input id="password" type="password" class="form-control" name="password" placeholder="Password" ng-model="password" required>
+        </div>
+        <div class="input-group form-group" ng-class="{ 'has-error': loginForm.confirmPassword.$invalid && loginForm.confirmPassword.$dirty}">
+            <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+            <input id="confirmPassword" type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" ng-model="confirmPassword" required>
+        </div>
+    </form>
+</div>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-warning" ng-click="cancelRegister()">Cancel</button>
+    <button type="button" class="btn btn-primary" ng-click="register()">Sign Up</button>
+</div>
