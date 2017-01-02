@@ -1,10 +1,10 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngStorage']);
 
-myAppModule.config(['$httpProvider', function($httpProvider) {
-        $httpProvider.defaults.useXDomain = true;
-        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-    }
-]);
+//myAppModule.config(['$httpProvider', function($httpProvider) {
+//        $httpProvider.defaults.useXDomain = true;
+//        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+//    }
+//]);
 
 myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce', 'ngToast', function ($scope, $rootScope, $http, $sce, $ngToast) {
     'use strict';
@@ -61,6 +61,13 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
             .then(function(response) {
                 event.id = response.data.id;
                 $scope.addEventLocally(event);
+            }, function(response) {
+                if( response ){
+                    $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data + "!");
+                }
+                else{
+                    $scope.showErrorToast("Could not add reservation!");
+                }
             }
         );
     };
@@ -98,7 +105,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     }
 }]);
 
-myAppModule.controller('loginController', function($scope, $uibModal, $rootScope) {
+myAppModule.controller('loginController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce) {
 
 	$scope.showLogin = function() {
 		$rootScope.loginModal = $uibModal.open({
@@ -117,12 +124,37 @@ myAppModule.controller('loginController', function($scope, $uibModal, $rootScope
     $scope.authenticate = function() {
         var username = $scope.username;
         var password = $scope.password;
-        if( username == 'admin' && password == 'admin'){
-            alert("success");
-            $rootScope.loginModal.close("Successful login");
-        } else {
-            alert("login failed");
+        var base64_creds = window.btoa(username + ":" + password);
+        var req = {
+         method: 'GET',
+         url: 'http://localhost:5000/token',
+         headers: {
+           'Authorization': 'Basic ' + base64_creds
+         }
         }
+        $http(req)
+            .then(function(response) {
+                ngToast.create("Login success!");
+                console.log(response.data.token);
+                $rootScope.loginModal.close("Successful login");
+            }, function(response) {
+                if( response ){
+                    $scope.showErrorToast("Login Failed:<br>" + response.status + ": " + response.data + "!");
+                }
+                else{
+                    $scope.showErrorToast("Login Failed!");
+                }
+            }
+        );
+    }
+
+    $scope.showErrorToast = function(message){
+        ngToast.danger({
+            content: $sce.trustAsHtml('<div class="error-toast">' + message + '</div>'),
+            timeout: 10000,
+            dismissOnClick: false,
+            dismissButton: true
+        });
     }
 
 });
