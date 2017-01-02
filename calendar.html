@@ -28,7 +28,9 @@
     <body>
         <div class="App" ng-app="App">
             <div class="header" ng-controller="loginController">
-                <button type="button" class="btn btn-default" ng-click="showLogin()">Login</button>
+                <button type="button" class="btn btn-default" ng-show="!isAuthenticated()" ng-click="showLogin()">Login</button>
+                <button type="button" class="btn btn-default" ng-show="!isAuthenticated()" ng-click="showRegister()">Sign Up</button>
+                <button type="button" class="btn btn-default" ng-show="isAuthenticated()" ng-click="logout()">Logout</button>
             </div>
             <toast></toast>
 
@@ -64,15 +66,6 @@
                     </calendar>
                 </div>
 		    </div>
-
-	    	<div class="footer" ng-controller="CalendarCtrl">
-			<form action="/" id="addEvent">
-				Title: <input type="text" id="title" ng-model="title"> Description: <input type="text" id="description" ng-model="description"><br>
-				Start Date: <input type="text" id="startDate" ng-model="startDate">AllDay <input type="checkbox" name="allDay" value="allDay" ng-model="allDay"><br>
-				End Date: <input type="text" id="endDate" ng-model="endDate"><br>
-				<button type="button" class="btn btn-default" ng-click="addEvent()">Submit</button>
-			</form>
-		</div>
 		</div>
 	</body>
 </html>

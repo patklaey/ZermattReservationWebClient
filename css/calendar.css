@@ -16,20 +16,11 @@ body {
 .calendar {
     position:absolute;
     top:10%;
-    bottom:20%;
+    bottom:1px;
     left:0px;
     right:0px;
     overflow-x: hidden;
     overflow-y: auto;
-}
-
-.footer {
-    position:absolute;
-    bottom:0px;
-    height:20%;
-    left:0px;
-    right:0px;
-    overflow:hidden;
 }
 
 .warning-toast {

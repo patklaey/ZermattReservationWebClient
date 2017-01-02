@@ -6,7 +6,11 @@ var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstra
 //    }
 //]);
 
-myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce', 'ngToast', function ($scope, $rootScope, $http, $sce, $ngToast) {
+myAppModule.run(function($rootScope, $sessionStorage){
+    $rootScope.$storage = $sessionStorage;
+});
+
+myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce', 'ngToast', function ($scope, $rootScope, $http, $sce, $ngToast, $sessionStorage) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -24,6 +28,10 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
                 $scope.showErrorToast("Cannot load reservations, please try again later!");
             }
         );
+    }
+
+    $scope.isAuthenticated = function() {
+        return $rootScope.$storage.isAuthenticated;
     }
 
     $scope.displayEvents = function (events) {
@@ -63,7 +71,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
                 $scope.addEventLocally(event);
             }, function(response) {
                 if( response ){
-                    $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data + "!");
+                    $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data.error + "!");
                 }
                 else{
                     $scope.showErrorToast("Could not add reservation!");
@@ -103,9 +111,25 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
             dismissButton: true
         });
     }
+
+    $rootScope.$on('login-success-event', function(event){
+        var base_auth_string = 'Basic ' + window.btoa($rootScope.$storage.token + ':unused');
+        $http.defaults.headers.common.Authorization = base_auth_string;
+    });
+
+    $rootScope.$on('logout-event', function(event){
+        $http.defaults.headers.common.Authorization = undefined;
+    });
+
 }]);
 
-myAppModule.controller('loginController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce) {
+myAppModule.controller('loginController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage) {
+
+    $scope.logout= function() {
+        $rootScope.$storage.isAuthenticated = false;
+        $rootScope.$storage.token = undefined;
+        $rootScope.$broadcast('logout-event')
+    }
 
 	$scope.showLogin = function() {
 		$rootScope.loginModal = $uibModal.open({
@@ -134,9 +158,14 @@ myAppModule.controller('loginController', function($scope, $uibModal, $rootScope
         }
         $http(req)
             .then(function(response) {
-                ngToast.create("Login success!");
-                console.log(response.data.token);
-                $rootScope.loginModal.close("Successful login");
+                if(response.data && response.data.token) {
+                    ngToast.create("Login success!");
+                    console.log(response.data.token);
+                    $rootScope.loginModal.close("Successful login");
+                    $rootScope.$storage.token = response.data.token;
+                    $rootScope.$storage.isAuthenticated = true;
+                    $rootScope.$broadcast('login-success-event');
+                }
             }, function(response) {
                 if( response ){
                     $scope.showErrorToast("Login Failed:<br>" + response.status + ": " + response.data + "!");
@@ -155,6 +184,10 @@ myAppModule.controller('loginController', function($scope, $uibModal, $rootScope
             dismissOnClick: false,
             dismissButton: true
         });
+    }
+
+    $scope.isAuthenticated = function() {
+        return $rootScope.$storage.isAuthenticated;
     }
 
 });
