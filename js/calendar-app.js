@@ -1,13 +1,49 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngStorage']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngStorage', 'ngMaterial']);
 
-//myAppModule.config(['$httpProvider', function($httpProvider) {
-//        $httpProvider.defaults.useXDomain = true;
-//        delete $httpProvider.defaults.headers.common['X-Requested-With'];
-//    }
-//]);
+myAppModule.config(['$httpProvider', function($httpProvider) {
+        $httpProvider.defaults.useXDomain = true;
+        delete $httpProvider.defaults.headers.common['X-Requested-With'];
+    }
+]);
 
-myAppModule.run(function($rootScope, $sessionStorage){
+myAppModule.directive("datepicker", function () {
+    return {
+        restrict: "A",
+        require: "ngModel",
+
+        link: function (scope, elem, attrs, ngModelCtrl) {
+            var updateModel = function () {
+
+            scope.$apply(function () {
+                ngModelCtrl.$modelValue = elem.val();
+                var ngModelNameArray = elem["0"].attributes["ng-model"].value.split(".");
+                scope[ngModelNameArray[0]][ngModelNameArray[1]] = elem.val();
+            });
+        };
+
+        elem.datetimepicker({
+            inline: true,
+            sideBySide: true,
+            locale: 'de',
+            toolbarPlacement: 'top',
+            showClear: true,
+            format: "DD.MM.YYYY HH:mm Z",
+            showTodayButton: true
+        });
+
+        elem.on("dp.change",function (e) {
+            updateModel();
+        });
+    }
+}
+});
+
+myAppModule.run(function($rootScope, $sessionStorage, $http){
     $rootScope.$storage = $sessionStorage;
+    if($rootScope.$storage.token){
+        var base_auth_string = 'Basic ' + window.btoa($rootScope.$storage.token + ':unused');
+        $http.defaults.headers.common.Authorization = base_auth_string;
+    }
 });
 
 myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce', 'ngToast', function ($scope, $rootScope, $http, $sce, $ngToast, $sessionStorage) {
@@ -59,15 +95,20 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     $scope.onTimeSelected = function (selectedTime) {
     };
 
-    $scope.addEvent = function() {
-        var allDay = false;
-        if( $scope.allDay ){
-            allDay = true;
-        }
-        var event = { title: $scope.title, startTime: new Date($scope.startDate), endTime: new Date($scope.endDate), allDay: allDay, description: $scope.description, userId: 1};
+    $scope.addReservation = function() {
+        var startDate = moment($scope.event.startDate, "DD.MM.YYYY HH:mm Z").toDate();
+        var endDate = moment($scope.event.endDate, "DD.MM.YYYY HH:mm Z").toDate();
+        console.log("Title: " + $scope.event.title + ", Desc; " + $scope.event.description + ", Start: " + startDate + ", End: " + endDate);
+        var event = { title: $scope.event.title, startTime: startDate, endTime: endDate, allDay: false, description: $scope.event.description, userId: 1};
+        $scope.addEvent(event);
+    };
+
+    $scope.addEvent = function(event) {
         $http.post('http://localhost:5000/reservations',JSON.stringify(event))
             .then(function(response) {
                 event.id = response.data.id;
+                $scope.showInfoToast("Event added!");
+                $rootScope.$broadcast("event-add-success");
                 $scope.addEventLocally(event);
             }, function(response) {
                 if( response ){
@@ -88,6 +129,12 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
         events.push(event);
         $rootScope.eventSource = events;
         $scope.eventSource = events;
+    }
+
+    $scope.cancelReservation = function() {
+        if($rootScope.reservationModal){
+            $rootScope.reservationModal.dismiss("User canceled");
+        }
     }
 
     $scope.showInfoToast = function(message) {
@@ -121,9 +168,13 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
         $http.defaults.headers.common.Authorization = undefined;
     });
 
+    $rootScope.$on("event-add-success", function(event){
+        $rootScope.reservationModal.close("Event added");
+    });
+
 }]);
 
-myAppModule.controller('loginController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage) {
 
     $scope.logout= function() {
         $rootScope.$storage.isAuthenticated = false;
@@ -134,16 +185,23 @@ myAppModule.controller('loginController', function($scope, $uibModal, $rootScope
 	$scope.showLogin = function() {
 		$rootScope.loginModal = $uibModal.open({
             templateUrl: "./templates/login-modal.html",
-            controller: "loginController"
+            controller: "headerController"
 		});
 	};
 
 	$scope.showRegister = function() {
 		$rootScope.registerModal = $uibModal.open({
             templateUrl: "./templates/register-modal.html",
-            controller: "loginController"
+            controller: "headerController"
 		});
 	};
+
+	$scope.showReservation = function(){
+        $rootScope.reservationModal = $uibModal.open({
+            templateUrl: "./templates/reservation-modal.html",
+            controller: "CalendarCtrl"
+        });
+	}
 
     $scope.cancelLogin = function() {
         if($rootScope.loginModal){

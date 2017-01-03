@@ -23,6 +23,10 @@ body {
     overflow-y: auto;
 }
 
+.clsDatePicker {
+    z-index: 100000;
+}
+
 .login-btn {
     float: right;
     margin:5px;
