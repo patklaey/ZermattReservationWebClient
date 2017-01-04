@@ -160,8 +160,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     }
 
     $rootScope.$on('login-success-event', function(event){
-        var base_auth_string = 'Basic ' + window.btoa($rootScope.$storage.token + ':unused');
-        $http.defaults.headers.common.Authorization = base_auth_string;
+        $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.$storage.token;
     });
 
     $rootScope.$on('logout-event', function(event){
