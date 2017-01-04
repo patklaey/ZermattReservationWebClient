@@ -161,6 +161,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
 
     $rootScope.$on('login-success-event', function(event){
         $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.$storage.token;
+        $rootScope.$storage.isAuthenticated = true;
     });
 
     $rootScope.$on('logout-event', function(event){
@@ -233,7 +234,6 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     console.log(response.data.token);
                     $rootScope.loginModal.close("Successful login");
                     $rootScope.$storage.token = response.data.token;
-                    $rootScope.$storage.isAuthenticated = true;
                     $rootScope.$broadcast('login-success-event');
                 }
             }, function(response) {
