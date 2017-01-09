@@ -12,12 +12,16 @@ myAppModule.directive("datepicker", function () {
         require: "ngModel",
 
         link: function (scope, elem, attrs, ngModelCtrl) {
-            var updateModel = function () {
+            var updateModel = function (event) {
 
             scope.$apply(function () {
                 ngModelCtrl.$modelValue = elem.val();
                 var ngModelNameArray = elem["0"].attributes["ng-model"].value.split(".");
-                scope[ngModelNameArray[0]][ngModelNameArray[1]] = elem.val();
+                if(!scope.event){
+                    scope.event = {};
+                }
+                console.log(event.date)
+                scope.event[ngModelNameArray[1]] = elem.val();
             });
         };
 
@@ -32,7 +36,7 @@ myAppModule.directive("datepicker", function () {
         });
 
         elem.on("dp.change",function (e) {
-            updateModel();
+            updateModel(e);
         });
     }
 }

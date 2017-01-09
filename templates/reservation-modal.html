@@ -21,13 +21,13 @@
         <div class='input-group date form-group'>
             <label for="datetimepicker1">From:</label>
             <div class='input-group form-group date' id='datetimepicker1'>
-                <input type="text" ng-model="event.startDate" datepicker />
+                <input type="hidden" ng-model="event.startDate" datepicker="startDate" />
             </div>
         </div>
         <div class='input-group date form-group'>
             <label for="datetimepicker1">To:</label>
             <div class='input-group form-group date' id='datetimepicker2'>
-                <input type="text" ng-model="event.endDate" datepicker />
+                <input type="hidden" ng-model="event.endDate" datepicker="endDate" />
             </div>
         </div>
     </form>
