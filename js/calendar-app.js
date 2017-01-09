@@ -6,6 +6,10 @@ myAppModule.config(['$httpProvider', function($httpProvider) {
     }
 ]);
 
+myAppModule.constant("CONFIG", {
+    "API_ENDPOINT": "http://localhost:5000",
+})
+
 myAppModule.directive("datepicker", function () {
     return {
         restrict: "A",
@@ -50,7 +54,7 @@ myAppModule.run(function($rootScope, $sessionStorage, $http){
     }
 });
 
-myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce', 'ngToast', function ($scope, $rootScope, $http, $sce, $ngToast, $sessionStorage) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, CONFIG) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -61,7 +65,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     };
 
     $scope.initEvents = function () {
-        $http.get('http://localhost:5000/reservations')
+        $http.get(CONFIG.API_ENDPOINT + '/reservations')
             .then(function(response) {
                 $scope.displayEvents(response.data);
             }, function() {
@@ -108,7 +112,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     };
 
     $scope.addEvent = function(event) {
-        $http.post('http://localhost:5000/reservations',JSON.stringify(event))
+        $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event))
             .then(function(response) {
                 event.id = response.data.id;
                 $scope.showInfoToast("Event added!");
@@ -142,11 +146,11 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     }
 
     $scope.showInfoToast = function(message) {
-        $ngToast.create(message);
+        ngToast.create(message);
     }
 
     $scope.showWarningToast = function(message){
-        $ngToast.warning({
+        ngToast.warning({
             content: $sce.trustAsHtml('<div class="warning-toast">' + message + '</div>'),
             timeout: 5000,
             dismissOnClick: false,
@@ -155,7 +159,7 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
     }
 
     $scope.showErrorToast = function(message){
-        $ngToast.danger({
+        ngToast.danger({
             content: $sce.trustAsHtml('<div class="error-toast">' + message + '</div>'),
             timeout: 10000,
             dismissOnClick: false,
@@ -176,9 +180,9 @@ myAppModule.controller('CalendarCtrl', ['$scope', '$rootScope', '$http', '$sce',
         $rootScope.reservationModal.close("Event added");
     });
 
-}]);
+});
 
-myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage, CONFIG) {
 
     $scope.logout= function() {
         $rootScope.$storage.isAuthenticated = false;
@@ -226,7 +230,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         var base64_creds = window.btoa(username + ":" + password);
         var req = {
          method: 'GET',
-         url: 'http://localhost:5000/token',
+         url: CONFIG.API_ENDPOINT + '/token',
          headers: {
            'Authorization': 'Basic ' + base64_creds
          }
