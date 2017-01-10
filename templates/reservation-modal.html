@@ -19,16 +19,12 @@
             <input id="description" type="textbox" class="form-control" name="description" placeholder="Description (optional)" ng-model="event.description">
         </div>
         <div class='input-group date form-group'>
-            <label for="datetimepicker1">From:</label>
-            <div class='input-group form-group date' id='datetimepicker1'>
-                <input type="hidden" ng-model="event.startDate" datepicker="startDate" />
-            </div>
+            <label for="startDate">From:</label>
+            <div id="startDate" ng-model="event.startDate" datepicker="startDate"></div>
         </div>
         <div class='input-group date form-group'>
-            <label for="datetimepicker1">To:</label>
-            <div class='input-group form-group date' id='datetimepicker2'>
-                <input type="hidden" ng-model="event.endDate" datepicker="endDate" />
-            </div>
+            <label for="endDate">To:</label>
+            <div id="endDate" ng-model="event.endDate" datepicker="endDate"></div>
         </div>
     </form>
 </div>
@@ -40,10 +36,15 @@
 
 <script type="text/javascript">
     $(function () {
-        $('#datetimepicker1').datetimepicker();
-    });
-
-    $(function () {
-        $('#datetimepicker2').datetimepicker();
+        $('#startDate').datetimepicker();
+        $('#endDate').datetimepicker({
+            useCurrent: false
+        });
+        $("#startDate").on("dp.change", function (e) {
+            $('#endDate').data("DateTimePicker").minDate(e.date);
+        });
+        $("#endDate").on("dp.change", function (e) {
+            $('#startDate').data("DateTimePicker").maxDate(e.date);
+        });
     });
 </script>
