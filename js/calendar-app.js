@@ -266,6 +266,39 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         }
     }
 
+    $scope.register = function() {
+        angular.forEach($scope.registerForm.$error.required, function(field) {
+            field.$setTouched();
+        });
+
+        if ($scope.registerForm.$invalid){
+            return;
+        }
+
+        var user = {
+            username: $scope.user.username,
+            password: $scope.user.password,
+            email: $scope.user.email
+        }
+
+        $http.post(CONFIG.API_ENDPOINT + '/users',JSON.stringify(user))
+            .then(function(response) {
+                ngToast.create({
+                    timeout: 10000,
+                    content: $sce.trustAsHtml("Registration success!<br/>You should have received a mail with further information")
+                });
+                $rootScope.registerModal.close("Successful registration");
+            }, function(response) {
+                if( response ){
+                    $scope.showErrorToast("Registration failed:<br/>" + response.status + ": " + response.data.error + "!");
+                }
+                else{
+                    $scope.showErrorToast("Registration failed!");
+                }
+            }
+        );
+    }
+
     $scope.authenticate = function() {
         angular.forEach($scope.loginForm.$error.required, function(field) {
             field.$setTouched();
@@ -300,7 +333,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 }
             }, function(response) {
                 if( response ){
-                    $scope.showErrorToast("Login Failed:<br>" + response.status + ": " + response.data + "!");
+                    $scope.showErrorToast("Login Failed:<br/>" + response.status + ": " + response.data + "!");
                 }
                 else{
                     $scope.showErrorToast("Login Failed!");
