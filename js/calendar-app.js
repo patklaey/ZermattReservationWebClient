@@ -24,8 +24,7 @@ myAppModule.directive("datepicker", function () {
                 if(!scope.event){
                     scope.event = {};
                 }
-                console.log(event.date)
-                scope.event[ngModelNameArray[1]] = elem.val();
+                scope.event[ngModelNameArray[1]] = event.date.toDate();
             });
         };
 
@@ -49,7 +48,7 @@ myAppModule.directive("datepicker", function () {
 myAppModule.run(function($rootScope, $sessionStorage, $http){
     $rootScope.$storage = $sessionStorage;
     if($rootScope.$storage.token){
-        var base_auth_string = 'Basic ' + window.btoa($rootScope.$storage.token + ':unused');
+        var base_auth_string = 'Bearer ' + $rootScope.$storage.token;
         $http.defaults.headers.common.Authorization = base_auth_string;
     }
 });
@@ -104,10 +103,35 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.addReservation = function() {
-        var startDate = moment($scope.event.startDate, "DD.MM.YYYY HH:mm Z").toDate();
-        var endDate = moment($scope.event.endDate, "DD.MM.YYYY HH:mm Z").toDate();
-        console.log("Title: " + $scope.event.title + ", Desc; " + $scope.event.description + ", Start: " + startDate + ", End: " + endDate);
-        var event = { title: $scope.event.title, startTime: startDate, endTime: endDate, allDay: false, description: $scope.event.description, userId: 1};
+        angular.forEach($scope.reservationForm.$error.required, function(field) {
+            field.$setTouched();
+        });
+
+        if ($scope.reservationForm.$invalid){
+            return;
+        }
+
+        var startDate;
+        var endDate;
+        var allDay = false;
+
+        if ($scope.event && $scope.event.startDate ){
+            startDate = $scope.event.startDate;
+        } else {
+            startDate = moment().toDate();
+        }
+
+        if ($scope.event && $scope.event.endDate) {
+            endDate = $scope.event.endDate;
+        } else {
+            endDate = moment().toDate();
+        }
+
+        if ($scope.event && $scope.event.allDay){
+            allDay = true;
+        }
+
+        var event = { title: $scope.event.title, startTime: startDate, endTime: endDate, allDay: allDay, description: $scope.event.description};
         $scope.addEvent(event);
     };
 
