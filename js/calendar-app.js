@@ -1,4 +1,4 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngStorage', 'ngMaterial']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngStorage', 'ngMaterial', 'ngMessages']);
 
 myAppModule.config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -223,8 +223,19 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         }
     }
 
-
     $scope.authenticate = function() {
+        angular.forEach($scope.loginForm.$error.required, function(field) {
+            field.$setTouched();
+        });
+
+        if ($scope.loginForm.$invalid){
+            return;
+        }
+
+        $scope.authenticateInBackend();
+    }
+
+    $scope.authenticateInBackend = function() {
         var username = $scope.username;
         var password = $scope.password;
         var base64_creds = window.btoa(username + ":" + password);
@@ -259,6 +270,15 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         ngToast.danger({
             content: $sce.trustAsHtml('<div class="error-toast">' + message + '</div>'),
             timeout: 10000,
+            dismissOnClick: false,
+            dismissButton: true
+        });
+    }
+
+    $scope.showWarningToast = function(message){
+        ngToast.warning({
+            content: $sce.trustAsHtml('<div class="warning-toast">' + message + '</div>'),
+            timeout: 5000,
             dismissOnClick: false,
             dismissButton: true
         });
