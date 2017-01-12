@@ -7,8 +7,8 @@ myAppModule.config(['$httpProvider', function($httpProvider) {
 ]);
 
 myAppModule.constant("CONFIG", {
-    "API_ENDPOINT": "http://localhost:5000",
-})
+    "API_ENDPOINT": "http://localhost:5000"
+});
 
 myAppModule.directive("compareTo", function() {
    return {
@@ -67,8 +67,7 @@ myAppModule.directive("datepicker", function () {
 myAppModule.run(function($rootScope, $sessionStorage, $http){
     $rootScope.$storage = $sessionStorage;
     if($rootScope.$storage.token){
-        var base_auth_string = 'Bearer ' + $rootScope.$storage.token;
-        $http.defaults.headers.common.Authorization = base_auth_string;
+        $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.$storage.token;
     }
 });
 
@@ -90,11 +89,11 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
                 $scope.showErrorToast("Cannot load reservations, please try again later!");
             }
         );
-    }
+    };
 
     $scope.isAuthenticated = function() {
         return $rootScope.$storage.isAuthenticated;
-    }
+    };
 
     $scope.displayEvents = function (events) {
         var allEvents = [];
@@ -180,17 +179,17 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         events.push(event);
         $rootScope.eventSource = events;
         $scope.eventSource = events;
-    }
+    };
 
     $scope.cancelReservation = function() {
         if($rootScope.reservationModal){
             $rootScope.reservationModal.dismiss("User canceled");
         }
-    }
+    };
 
     $scope.showInfoToast = function(message) {
         ngToast.create(message);
-    }
+    };
 
     $scope.showWarningToast = function(message){
         ngToast.warning({
@@ -199,7 +198,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
             dismissOnClick: false,
             dismissButton: true
         });
-    }
+    };
 
     $scope.showErrorToast = function(message){
         ngToast.danger({
@@ -208,7 +207,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
             dismissOnClick: false,
             dismissButton: true
         });
-    }
+    };
 
     $rootScope.$on('login-success-event', function(event){
         $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.$storage.token;
@@ -231,7 +230,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $rootScope.$storage.isAuthenticated = false;
         $rootScope.$storage.token = undefined;
         $rootScope.$broadcast('logout-event')
-    }
+    };
 
 	$scope.showLogin = function() {
 		$rootScope.loginModal = $uibModal.open({
@@ -252,19 +251,19 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             templateUrl: "./templates/reservation-modal.html",
             controller: "CalendarCtrl"
         });
-	}
+	};
 
     $scope.cancelLogin = function() {
         if($rootScope.loginModal){
             $rootScope.loginModal.dismiss("User canceled");
         }
-    }
+    };
 
     $scope.cancelRegister = function() {
         if($rootScope.registerModal){
             $rootScope.registerModal.dismiss("User canceled");
         }
-    }
+    };
 
     $scope.register = function() {
         angular.forEach($scope.registerForm.$error.required, function(field) {
@@ -279,7 +278,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             username: $scope.user.username,
             password: $scope.user.password,
             email: $scope.user.email
-        }
+        };
 
         $http.post(CONFIG.API_ENDPOINT + '/users',JSON.stringify(user))
             .then(function(response) {
@@ -297,7 +296,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 }
             }
         );
-    }
+    };
 
     $scope.authenticate = function() {
         angular.forEach($scope.loginForm.$error.required, function(field) {
@@ -309,7 +308,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         }
 
         $scope.authenticateInBackend();
-    }
+    };
 
     $scope.authenticateInBackend = function() {
         var username = $scope.username;
@@ -321,7 +320,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
          headers: {
            'Authorization': 'Basic ' + base64_creds
          }
-        }
+        };
         $http(req)
             .then(function(response) {
                 if(response.data && response.data.token) {
@@ -340,7 +339,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 }
             }
         );
-    }
+    };
 
     $scope.showErrorToast = function(message){
         ngToast.danger({
@@ -349,7 +348,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             dismissOnClick: false,
             dismissButton: true
         });
-    }
+    };
 
     $scope.showWarningToast = function(message){
         ngToast.warning({
@@ -358,10 +357,10 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             dismissOnClick: false,
             dismissButton: true
         });
-    }
+    };
 
     $scope.isAuthenticated = function() {
         return $rootScope.$storage.isAuthenticated;
-    }
+    };
 
 });
