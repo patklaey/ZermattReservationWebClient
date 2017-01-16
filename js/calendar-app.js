@@ -71,7 +71,7 @@ myAppModule.run(function($rootScope, $sessionStorage, $http){
     }
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, CONFIG) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, $timeout, CONFIG, info) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -158,7 +158,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
             .then(function(response) {
                 event.id = response.data.id;
                 $scope.showInfoToast("Event added!");
-                $rootScope.$broadcast("event-add-success");
+                $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
             }, function(response) {
                 if( response ){
@@ -216,10 +216,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
 
     $rootScope.$on('logout-event', function(event){
         $http.defaults.headers.common.Authorization = undefined;
-    });
-
-    $rootScope.$on("event-add-success", function(event){
-        $rootScope.reservationModal.close("Event added");
     });
 
 });
