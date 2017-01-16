@@ -10,6 +10,35 @@ myAppModule.constant("CONFIG", {
     "API_ENDPOINT": "http://localhost:5000"
 });
 
+myAppModule.service('AuthService', function($http, CONFIG){
+    this.checkUniqueValue = function(property, value) {
+        return $http.get(CONFIG.API_ENDPOINT + "/users/checkUnique", {'params':{'key': property, 'value':value}}).then( function(result) {
+            return result.data.unique;
+        });
+    }
+});
+
+myAppModule.directive("ngUnique", function(AuthService) {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ngModel) {
+            element.bind('blur', function (e) {
+            if (!ngModel || !element.val()) return;
+                var keyProperty = scope.$eval(attrs.ngUnique);
+                var currentValue = element.val();
+                AuthService.checkUniqueValue(keyProperty.property, currentValue)
+                    .then(function (unique) {
+                        if (currentValue == element.val()) {
+                            ngModel.$setValidity('unique', unique);
+                            scope.$broadcast('show-errors-check-validity');
+                        }
+                });
+            });
+        }
+    }
+});
+
 myAppModule.directive("compareTo", function() {
    return {
        require: "ngModel",
@@ -71,7 +100,7 @@ myAppModule.run(function($rootScope, $sessionStorage, $http){
     }
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, $timeout, CONFIG, info) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, $timeout, CONFIG) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
