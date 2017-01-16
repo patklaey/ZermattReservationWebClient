@@ -10,6 +10,38 @@ myAppModule.constant("CONFIG", {
     "API_ENDPOINT": "http://localhost:5000"
 });
 
+myAppModule.service('CheckUniqueService', function ($http, CONFIG) {
+    this.checkUnique = function(property, value) {
+        return $http.get(CONFIG.API_ENDPOINT + '/users/checkUnique', {params:{property:value}}).then( function(result) {
+            return result.data.unique;
+        });
+    }
+});
+
+myAppModule.directive("ngUnique", function(CheckUniqueService) {
+    return {
+        restrict: 'A',
+        require: 'ngModel',
+        link: function (scope, element, attrs, ngModel) {
+            element.bind('blur', function (e) {
+                if (!ngModel || !element.val()) return;
+                var keyProperty = scope.$eval(attrs.ngUnique);
+                var currentValue = element.val();
+                CheckUniqueService.checkUnique(keyProperty.property, currentValue)
+                    .then(function (unique) {
+                        //Ensure value that being checked hasn't changed
+                        //since the Ajax call was made
+                        if (currentValue == element.val()) {
+                            console.log('unique = '+unique);
+                            ngModel.$setValidity('unique', unique);
+                            scope.$broadcast('show-errors-check-validity');
+                        }
+                    });
+            });
+        }
+    }
+});
+
 myAppModule.directive("compareTo", function() {
    return {
        require: "ngModel",

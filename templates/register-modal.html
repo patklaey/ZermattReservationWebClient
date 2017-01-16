@@ -8,10 +8,20 @@
         <div ng-class="{ 'has-error': registerForm.username.$invalid && registerForm.username.$touched }">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                <input id="username" type="text" class="form-control" name="username" placeholder="Username" ng-model="user.username" minlength="3" maxlength="15" required>
+                <input id="username"
+                       type="text"
+                       class="form-control"
+                       name="username"
+                       placeholder="Username"
+                       ng-model="user.username"
+                       minlength="3"
+                       maxlength="15"
+                       unique="{property: 'username'}"
+                       required>
             </div>
             <div class="help-block" ng-messages="registerForm.username.$error" ng-if="registerForm.username.$touched">
                 <p ng-message="required">Your username is required.</p>
+                <p ng-message="unique">The username is already taken.</p>
                 <p ng-message="minlength">Your username must be at least 3 characters long.</p>
                 <p ng-message="maxlength">Your username cannot be longer than 15 characters.</p>
             </div>
@@ -20,10 +30,17 @@
         <div ng-class="{ 'has-error': registerForm.email.$invalid && registerForm.email.$touched }">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                <input id="email" type="email" class="form-control" name="email" placeholder="Email" ng-model="user.email" required>
+                <input id="email"
+                       type="email"
+                       class="form-control"
+                       name="email"
+                       placeholder="Email"
+                       ng-model="user.email"
+                       unique="{property: 'email'}"
+                       required>
             </div>
             <div class="help-block" ng-messages="registerForm.email.$error" ng-if="registerForm.email.$touched">
-                <p ng-message="required">Your e-mail address is required.</p>
+                <p ng-message="unique">Your e-mail address is required.</p>
                 <p ng-message="email">A valid e-mail address is required.</p>
             </div>
         </div>
