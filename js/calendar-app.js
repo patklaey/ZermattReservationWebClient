@@ -10,33 +10,30 @@ myAppModule.constant("CONFIG", {
     "API_ENDPOINT": "http://localhost:5000"
 });
 
-myAppModule.service('CheckUniqueService', function ($http, CONFIG) {
-    this.checkUnique = function(property, value) {
-        return $http.get(CONFIG.API_ENDPOINT + '/users/checkUnique', {params:{property:value}}).then( function(result) {
+myAppModule.service('AuthService', function($http, CONFIG){
+    this.checkUniqueValue = function(property, value) {
+        return $http.get(CONFIG.API_ENDPOINT + "/users/checkUnique", {'params':{'key': property, 'value':value}}).then( function(result) {
             return result.data.unique;
         });
     }
 });
 
-myAppModule.directive("ngUnique", function(CheckUniqueService) {
+myAppModule.directive("ngUnique", function(AuthService) {
     return {
         restrict: 'A',
         require: 'ngModel',
         link: function (scope, element, attrs, ngModel) {
             element.bind('blur', function (e) {
-                if (!ngModel || !element.val()) return;
+            if (!ngModel || !element.val()) return;
                 var keyProperty = scope.$eval(attrs.ngUnique);
                 var currentValue = element.val();
-                CheckUniqueService.checkUnique(keyProperty.property, currentValue)
+                AuthService.checkUniqueValue(keyProperty.property, currentValue)
                     .then(function (unique) {
-                        //Ensure value that being checked hasn't changed
-                        //since the Ajax call was made
                         if (currentValue == element.val()) {
-                            console.log('unique = '+unique);
                             ngModel.$setValidity('unique', unique);
                             scope.$broadcast('show-errors-check-validity');
                         }
-                    });
+                });
             });
         }
     }
@@ -103,7 +100,7 @@ myAppModule.run(function($rootScope, $sessionStorage, $http){
     }
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, CONFIG) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, $timeout, CONFIG) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -190,7 +187,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
             .then(function(response) {
                 event.id = response.data.id;
                 $scope.showInfoToast("Event added!");
-                $rootScope.$broadcast("event-add-success");
+                $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
             }, function(response) {
                 if( response ){
@@ -248,10 +245,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
 
     $rootScope.$on('logout-event', function(event){
         $http.defaults.headers.common.Authorization = undefined;
-    });
-
-    $rootScope.$on("event-add-success", function(event){
-        $rootScope.reservationModal.close("Event added");
     });
 
 });
