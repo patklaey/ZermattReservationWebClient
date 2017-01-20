@@ -3,35 +3,6 @@ body {
     width:100%
 }
 
-.header {
-    position:absolute;
-    top:0px;
-    left:0px;
-    height:10%;
-    right:0px;
-    overflow:hidden;
-    margin:10px;
-}
-
-.calendar {
-    position:absolute;
-    top:10%;
-    bottom:1px;
-    left:0px;
-    right:0px;
-    overflow-x: hidden;
-    overflow-y: auto;
-}
-
-.clsDatePicker {
-    z-index: 100000;
-}
-
-.login-btn {
-    float: right;
-    margin:5px;
-}
-
 .warning-toast {
     margin:5px;
     padding-right:10px;

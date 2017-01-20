@@ -1,6 +1,9 @@
 <!DOCTYPE html>
 <html lang="en">
 
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta charset="utf-8">
+
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular.min.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.5.5/angular-animate.min.js"></script>
@@ -10,11 +13,13 @@
     <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.4.0/angular-messages.js"></script>
     <script src="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.js"></script>
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/angular_material/1.1.0/angular-material.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
     <script src="./libs/moment/min/moment-with-locales.min.js"></script>
 
     <!--Responsive calendar-->
-    <link rel="stylesheet" href="./libs/bootstrap/dist/css/bootstrap.css"/>
     <link rel="stylesheet" href="./css/calendar.css"/>
     <script src="./js/calendar.js"></script>
     <script src="./js/calendar-app.js"></script>
@@ -31,15 +36,26 @@
 
     <body>
         <div class="App" ng-app="App">
-            <div class="header" ng-controller="headerController">
-                <button type="button" class="btn btn-default login-btn" ng-show="!isAuthenticated()" ng-click="showLogin()">Login</button>
-                <button type="button" class="btn btn-default login-btn" ng-show="!isAuthenticated()" ng-click="showRegister()">Sign Up</button>
-                <button type="button" class="btn btn-default login-btn" ng-show="isAuthenticated()" ng-click="logout()">Logout</button>
-                <button type="button" class="btn btn-default" ng-show="isAuthenticated()" ng-click="showReservation()">Add Reservation</button>
-            </div>
+            <nav class="navbar navbar-default">
+                <div class="container-fluid" ng-controller="headerController">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">Zermatt Reservations</a>
+                    </div>
+                    <ul class="nav navbar-nav">
+                        <li><a href="" ng-show="isAuthenticated()" ng-click="showReservation()">Add Reservation</a></li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li><a href="" ng-show="!isAuthenticated()" ng-click="showLogin()">Login</a></li>
+                        <li><a href="" ng-show="!isAuthenticated()" ng-click="showRegister()">Sign Up</a></li>
+                        <li><a href=""  ng-show="isAuthenticated()" ng-click="logout()">Logout</a></li>
+                    </ul>
+                </div>
+            </nav>
             <toast></toast>
 
-	    	<div ng-controller="CalendarCtrl" class="calendar" ng-init="initEvents()">
+            <div class="container">
+                <div class="row">
+	    	        <div ng-controller="CalendarCtrl" class="calendar " ng-init="initEvents()">
                 <div class="btn-toolbar">
                     <div class="btn-group">
                         <button type="button" class="btn btn-default" ng-class="{active:mode==='month'}"
@@ -71,6 +87,8 @@
                     </calendar>
                 </div>
 		    </div>
+                </div>
+            </div>
 		</div>
 	</body>
 </html>
