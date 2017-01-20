@@ -81,9 +81,10 @@
 
                 <div class="well well-sm" id="calContent">
                     <calendar ng-model="currentDate" calendar-mode="mode" event-source="eventSource"
-                        range-changed="reloadSource(startTime, endTime)"
-                        event-selected="onEventSelected(event)"
-                        time-selected="onTimeSelected(selectedTime)">
+                              format-hour-column="HH:mm"
+                              range-changed="reloadSource(startTime, endTime)"
+                              event-selected="onEventSelected(event)"
+                              time-selected="onTimeSelected(selectedTime)">
                     </calendar>
                 </div>
 		    </div>
