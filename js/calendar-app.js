@@ -278,7 +278,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 	$scope.showReservation = function(){
         $rootScope.reservationModal = $uibModal.open({
             templateUrl: "./templates/reservation-modal.html",
-            controller: "CalendarCtrl"
+            controller: "CalendarCtrl",
+            size: "lg"
         });
 	};
 
