@@ -189,6 +189,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
                 $scope.showInfoToast("Event added!");
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
+                $rootScope.$broadcast('event-added');
             }, function(response) {
                 if( response ){
                     $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data.error + "!");
@@ -207,7 +208,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         }
         events.push(event);
         $rootScope.eventSource = events;
-        $scope.eventSource = events;
     };
 
     $scope.cancelReservation = function() {
@@ -245,6 +245,10 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
 
     $rootScope.$on('logout-event', function(event){
         $http.defaults.headers.common.Authorization = undefined;
+    });
+
+    $rootScope.$on('event-added', function(){
+        $scope.$broadcast('eventSourceChanged',$rootScope.eventSource);
     });
 
 });
