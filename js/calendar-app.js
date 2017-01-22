@@ -329,6 +329,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
     };
 
     $scope.authenticate = function() {
+        $scope.loginFailed = false;
         angular.forEach($scope.loginForm.$error.required, function(field) {
             field.$setTouched();
         });
@@ -354,6 +355,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $http(req)
             .then(function(response) {
                 if(response.data && response.data.token) {
+                    $scope.loginFailed = false;
                     ngToast.create("Login success!");
                     console.log(response.data.token);
                     $rootScope.loginModal.close("Successful login");
@@ -361,12 +363,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     $rootScope.$broadcast('login-success-event');
                 }
             }, function(response) {
-                if( response ){
-                    $scope.showErrorToast("Login Failed:<br/>" + response.status + ": " + response.data + "!");
-                }
-                else{
-                    $scope.showErrorToast("Login Failed!");
-                }
+                $scope.loginFailed = true;
             }
         );
     };
