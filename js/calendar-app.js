@@ -155,6 +155,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         });
 
         if ($scope.reservationForm.$invalid){
+            $rootScope.$broadcast("invalid-form-event");
             return;
         }
 
@@ -251,6 +252,10 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         $scope.$broadcast('eventSourceChanged',$rootScope.eventSource);
     });
 
+    $rootScope.$on('invalid-form-event', function(){
+        $scope.showWarningToast("<strong>Please review your inputs</strong><br/>There are some errors in the form.");
+    });
+
 });
 
 myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage, CONFIG) {
@@ -301,6 +306,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         });
 
         if ($scope.registerForm.$invalid){
+            $rootScope.$broadcast("invalid-form-event");
             return;
         }
 
@@ -335,6 +341,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         });
 
         if ($scope.loginForm.$invalid){
+            $rootScope.$broadcast("invalid-form-event");
             return;
         }
 
@@ -363,7 +370,15 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     $rootScope.$broadcast('login-success-event');
                 }
             }, function(response) {
-                $scope.loginFailed = true;
+                if( response && response.data ) {
+                    if( response.status == 401 ) {
+                        $scope.loginFailed = true;
+                    } else {
+                        $scope.showErrorToast("Login Failed:<br/>" + response.data + "!");
+                    }
+                } else {
+                    $scope.showErrorToast("An unknown error occured<br/>Please try again later or contact the administrator.");
+                }
             }
         );
     };
