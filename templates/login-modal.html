@@ -5,24 +5,27 @@
 <form name="loginForm" ng-submit="authenticate()" novalidate>
 
     <div class="modal-body">
-            <div  ng-class="{ 'has-error': loginForm.username.$invalid && loginForm.username.$touched}">
-                <div class="input-group form-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                    <input id="username" type="text" class="form-control" name="username" placeholder="Username" ng-model="username" required>
-                </div>
-                <div class="help-block" ng-messages="loginForm.username.$error" ng-if="loginForm.username.$touched">
-                    <p ng-message="required">Your username is required.</p>
-                </div>
+        <div  ng-class="{ 'has-error': loginForm.username.$invalid && loginForm.username.$touched}">
+            <div class="input-group form-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
+                <input id="username" type="text" class="form-control" name="username" placeholder="Username" ng-model="username" required>
             </div>
-            <div ng-class="{ 'has-error': loginForm.password.$invalid && loginForm.password.$touched}">
-                <div class="input-group form-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                    <input id="password" type="password" class="form-control" name="password" placeholder="Password" ng-model="password" required>
-                </div>
-                <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched">
-                    <p ng-message="required">Password is required.</p>
-                </div>
+            <div class="help-block" ng-messages="loginForm.username.$error" ng-if="loginForm.username.$touched">
+                <p ng-message="required">Your username is required.</p>
             </div>
+        </div>
+        <div ng-class="{ 'has-error': loginForm.password.$invalid && loginForm.password.$touched}">
+            <div class="input-group form-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
+                <input id="password" type="password" class="form-control" name="password" placeholder="Password" ng-model="password" required>
+            </div>
+            <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched">
+                <p ng-message="required">Password is required.</p>
+            </div>
+        </div>
+        <div class="alert alert-danger" ng-show="loginFailed">
+            <strong>Login failed!</strong> Wrong username or password.
+        </div>
     </div>
 
     <div class="modal-footer">

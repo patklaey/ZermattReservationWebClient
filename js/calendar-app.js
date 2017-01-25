@@ -155,6 +155,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         });
 
         if ($scope.reservationForm.$invalid){
+            $rootScope.$broadcast("invalid-form-event");
             return;
         }
 
@@ -189,6 +190,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
                 $scope.showInfoToast("Event added!");
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
+                $rootScope.$broadcast('event-added');
             }, function(response) {
                 if( response ){
                     $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data.error + "!");
@@ -207,7 +209,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         }
         events.push(event);
         $rootScope.eventSource = events;
-        $scope.eventSource = events;
     };
 
     $scope.cancelReservation = function() {
@@ -247,6 +248,14 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         $http.defaults.headers.common.Authorization = undefined;
     });
 
+    $rootScope.$on('event-added', function(){
+        $scope.$broadcast('eventSourceChanged',$rootScope.eventSource);
+    });
+
+    $rootScope.$on('invalid-form-event', function(){
+        $scope.showWarningToast("<strong>Please review your inputs</strong><br/>There are some errors in the form.");
+    });
+
 });
 
 myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage, CONFIG) {
@@ -274,7 +283,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 	$scope.showReservation = function(){
         $rootScope.reservationModal = $uibModal.open({
             templateUrl: "./templates/reservation-modal.html",
-            controller: "CalendarCtrl"
+            controller: "CalendarCtrl",
+            size: "lg"
         });
 	};
 
@@ -296,6 +306,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         });
 
         if ($scope.registerForm.$invalid){
+            $rootScope.$broadcast("invalid-form-event");
             return;
         }
 
@@ -324,11 +335,13 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
     };
 
     $scope.authenticate = function() {
+        $scope.loginFailed = false;
         angular.forEach($scope.loginForm.$error.required, function(field) {
             field.$setTouched();
         });
 
         if ($scope.loginForm.$invalid){
+            $rootScope.$broadcast("invalid-form-event");
             return;
         }
 
@@ -349,6 +362,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $http(req)
             .then(function(response) {
                 if(response.data && response.data.token) {
+                    $scope.loginFailed = false;
                     ngToast.create("Login success!");
                     console.log(response.data.token);
                     $rootScope.loginModal.close("Successful login");
@@ -356,11 +370,14 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     $rootScope.$broadcast('login-success-event');
                 }
             }, function(response) {
-                if( response ){
-                    $scope.showErrorToast("Login Failed:<br/>" + response.status + ": " + response.data + "!");
-                }
-                else{
-                    $scope.showErrorToast("Login Failed!");
+                if( response && response.data ) {
+                    if( response.status == 401 ) {
+                        $scope.loginFailed = true;
+                    } else {
+                        $scope.showErrorToast("Login Failed:<br/>" + response.data + "!");
+                    }
+                } else {
+                    $scope.showErrorToast("An unknown error occured<br/>Please try again later or contact the administrator.");
                 }
             }
         );
