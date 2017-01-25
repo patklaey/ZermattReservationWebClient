@@ -5,6 +5,11 @@ body {
     overflow-x: hidden;
 }
 
+.dropdown:hover .dropdown-menu {
+    display: block;
+    margin-top: 0;
+}
+
 .warning-toast {
     margin:5px;
     padding-right:10px;
