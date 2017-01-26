@@ -1,4 +1,4 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngStorage', 'ngMaterial', 'ngMessages']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies']);
 
 myAppModule.config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -93,14 +93,11 @@ myAppModule.directive("datepicker", function () {
 }
 });
 
-myAppModule.run(function($rootScope, $sessionStorage, $http){
-    $rootScope.$storage = $sessionStorage;
-    if($rootScope.$storage.token){
-        $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.$storage.token;
-    }
+myAppModule.run(function($rootScope, $http){
+
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $sessionStorage, $timeout, CONFIG) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -121,7 +118,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.isAuthenticated = function() {
-        return $rootScope.$storage.isAuthenticated;
+        return $cookies.get("authenticated");
     };
 
     $scope.displayEvents = function (events) {
@@ -239,9 +236,9 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         });
     };
 
-    $rootScope.$on('login-success-event', function(event){
-        $http.defaults.headers.common.Authorization = 'Bearer ' + $rootScope.$storage.token;
-        $rootScope.$storage.isAuthenticated = true;
+    $rootScope.$on('login-success-event', function(token){
+        var token = arguments[1];
+        $http.defaults.headers.common.Authorization = 'Bearer ' + token;
     });
 
     $rootScope.$on('logout-event', function(event){
@@ -258,11 +255,10 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
 
 });
 
-myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, $sessionStorage, CONFIG) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies) {
 
     $scope.logout= function() {
-        $rootScope.$storage.isAuthenticated = false;
-        $rootScope.$storage.token = undefined;
+        $cookies.remove("authenticated");
         $rootScope.$broadcast('logout-event')
     };
 
@@ -364,10 +360,9 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 if(response.data && response.data.token) {
                     $scope.loginFailed = false;
                     ngToast.create("Login success!");
-                    console.log(response.data.token);
+                    $scope.setupUser(response.data.token);
                     $rootScope.loginModal.close("Successful login");
-                    $rootScope.$storage.token = response.data.token;
-                    $rootScope.$broadcast('login-success-event');
+                    $rootScope.$broadcast('login-success-event', response.data.token);
                 }
             }, function(response) {
                 if( response && response.data ) {
@@ -382,6 +377,16 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             }
         );
     };
+
+    $scope.setupUser = function(token){
+        var token_parts = token.split(".");
+        var headers = JSON.parse(window.atob(token_parts[0]));
+        var payload = JSON.parse(window.atob(token_parts[1]));
+        $rootScope.username = payload.username;
+        $cookies.put("username", payload.username);
+        $cookies.put("authenticated",true);
+        $cookies.put("isAdmin", payload.admin);
+    }
 
     $scope.showErrorToast = function(message){
         ngToast.danger({
@@ -402,7 +407,11 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
     };
 
     $scope.isAuthenticated = function() {
-        return $rootScope.$storage.isAuthenticated;
+        return $cookies.get("authenticated");
     };
+
+    $scope.isAdmin = function(){
+        return $scope.isAuthenticated() && $cookies.get("isAdmin");
+    }
 
 });
