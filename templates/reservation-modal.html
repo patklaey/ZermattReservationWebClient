@@ -1,8 +1,3 @@
-<script src="./libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
-<script src="./libs/bootstrap/dist/js/bootstrap.min.js"></script>
-<link rel="stylesheet" href="./libs/bootstrap/dist/css/bootstrap.min.css" />
-<link rel="stylesheet" href="./libs/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" />
-
 <div class="modal-header">
     <h4>Add a reservation</h4>
 </div>
@@ -26,13 +21,13 @@
             <div class="col-md-12">
                 <div class="input-group form-group">
                     <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
-                    <input id="description" type="textbox" class="form-control" name="description" placeholder="Description (optional)" ng-model="event.description">
+                    <input id="description" type="text" class="form-control" name="description" placeholder="Description (optional)" ng-model="event.description">
                 </div>
             </div>
         </div>
         <div class="row">
             <div class="col-md-12">
-                <div lass='input-group date form-group'>
+                <div class='input-group date form-group'>
                     <label for="allDay">All Day:</label>
                     <input id="allDay" name="allDay" type="checkbox" ng-model="event.allDay"/>
                 </div>
