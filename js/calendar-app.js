@@ -236,12 +236,12 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         });
     };
 
-    $rootScope.$on('login-success-event', function(token){
+    $rootScope.$on('login-success-event', function(){
         var token = arguments[1];
         $http.defaults.headers.common.Authorization = 'Bearer ' + token;
     });
 
-    $rootScope.$on('logout-event', function(event){
+    $rootScope.$on('logout-event', function(){
         $http.defaults.headers.common.Authorization = undefined;
     });
 
@@ -313,7 +313,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         };
 
         $http.post(CONFIG.API_ENDPOINT + '/users',JSON.stringify(user))
-            .then(function(response) {
+            .then(function() {
                 ngToast.create({
                     timeout: 10000,
                     content: $sce.trustAsHtml("Registration success!<br/>You should have received a mail with further information")
@@ -386,7 +386,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $cookies.put("username", payload.username);
         $cookies.put("authenticated",true);
         $cookies.put("isAdmin", payload.admin);
-    }
+    };
 
     $scope.showErrorToast = function(message){
         ngToast.danger({
