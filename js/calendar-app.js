@@ -382,10 +382,10 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         var token_parts = token.split(".");
         var headers = JSON.parse(window.atob(token_parts[0]));
         var payload = JSON.parse(window.atob(token_parts[1]));
-        $rootScope.username = payload.username;
-        $cookies.put("username", payload.username);
+        $rootScope.username = payload.user_claims.username;
+        $cookies.put("username", payload.user_claims.username);
         $cookies.put("authenticated",true);
-        $cookies.put("isAdmin", payload.admin);
+        $cookies.put("isAdmin", payload.user_claims.admin);
     };
 
     $scope.showErrorToast = function(message){
