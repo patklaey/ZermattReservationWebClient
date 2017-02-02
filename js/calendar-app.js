@@ -2,6 +2,7 @@ var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstra
 
 myAppModule.config(['$httpProvider', function($httpProvider) {
         $httpProvider.defaults.useXDomain = true;
+        $httpProvider.defaults.withCredentials = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
     }
 ]);
@@ -236,11 +237,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         });
     };
 
-    $rootScope.$on('login-success-event', function(){
-        var token = arguments[1];
-        $http.defaults.headers.common.Authorization = 'Bearer ' + token;
-    });
-
     $rootScope.$on('logout-event', function(){
         $http.defaults.headers.common.Authorization = undefined;
     });
@@ -362,7 +358,6 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     ngToast.create("Login success!");
                     $scope.setupUser(response.data.token);
                     $rootScope.loginModal.close("Successful login");
-                    $rootScope.$broadcast('login-success-event', response.data.token);
                 }
             }, function(response) {
                 if( response && response.data ) {
