@@ -8,7 +8,13 @@ myAppModule.config(['$httpProvider', function($httpProvider) {
 ]);
 
 myAppModule.constant("CONFIG", {
-    "API_ENDPOINT": "http://localhost:5000"
+    "API_ENDPOINT": "http://zermatt-api.patklaey.ch"
+});
+
+myAppModule.constant("COOKIE_KEYS", {
+    "USERNAME":"username",
+    "AUTHENTICATED": "authenticated",
+    "IS_ADMIN": "isAdmin"
 });
 
 myAppModule.service('AuthService', function($http, CONFIG){
@@ -94,11 +100,11 @@ myAppModule.directive("datepicker", function () {
 }
 });
 
-myAppModule.run(function($rootScope, $http){
-
+myAppModule.run(function($rootScope, $cookies){
+    $rootScope.currentUser = $cookies.get("username");
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -119,7 +125,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.isAuthenticated = function() {
-        return $cookies.get("authenticated");
+        return $cookies.get(COOKIE_KEYS.AUTHENTICATED);
     };
 
     $scope.displayEvents = function (events) {
@@ -237,10 +243,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         });
     };
 
-    $rootScope.$on('logout-event', function(){
-        $http.defaults.headers.common.Authorization = undefined;
-    });
-
     $rootScope.$on('event-added', function(){
         $scope.$broadcast('eventSourceChanged',$rootScope.eventSource);
     });
@@ -251,11 +253,12 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
 
 });
 
-myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS) {
 
     $scope.logout= function() {
         $cookies.remove("authenticated");
-        $rootScope.$broadcast('logout-event')
+        $cookies.remove("username");
+        $cookies.remove("isAdmin");
     };
 
 	$scope.showLogin = function() {
@@ -377,10 +380,10 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         var token_parts = token.split(".");
         var headers = JSON.parse(window.atob(token_parts[0]));
         var payload = JSON.parse(window.atob(token_parts[1]));
-        $rootScope.username = payload.user_claims.username;
-        $cookies.put("username", payload.user_claims.username);
-        $cookies.put("authenticated",true);
-        $cookies.put("isAdmin", payload.user_claims.admin);
+        $rootScope.currentUser = payload.user_claims.username;
+        $cookies.put(COOKIE_KEYS.USERNAME, payload.user_claims.username);
+        $cookies.put(COOKIE_KEYS.AUTHENTICATED,true);
+        $cookies.put(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
     };
 
     $scope.showErrorToast = function(message){
