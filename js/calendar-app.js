@@ -432,4 +432,17 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         return $scope.isAuthenticated() && $location.path() != "/users";
     }
 
+    $scope.$on("$routeChangeSuccess", function($currentRoute, $previousRoute) {
+        if( $location.path() === '/users'){
+            $http.get(CONFIG.API_ENDPOINT + '/users')
+                        .then(function(response) {
+                            console.log(response.data);
+                            $rootScope.allUsers = response.data;
+                        }, function(response) {
+                            $scope.showErrorToast("<strong>Cannot load users</stong><br/>" + response.data.error);
+                        }
+            );
+        }
+    });
+
 });
