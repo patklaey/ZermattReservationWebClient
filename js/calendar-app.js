@@ -1,14 +1,22 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute']);
 
-myAppModule.config(['$httpProvider', function($httpProvider) {
+myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
         $httpProvider.defaults.useXDomain = true;
         $httpProvider.defaults.withCredentials = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
+
+        $routeProvider
+            .when("/users", {
+                templateUrl: "templates/users.html"
+            })
+            .otherwise({
+                templateUrl: "templates/calendar.html"
+            });
     }
 ]);
 
 myAppModule.constant("CONFIG", {
-    "API_ENDPOINT": "http://zermatt-api.patklaey.ch"
+    "API_ENDPOINT": "http://localhost:5000"
 });
 
 myAppModule.constant("COOKIE_KEYS", {
@@ -253,7 +261,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
 
 });
 
-myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location) {
 
     $scope.logout= function() {
         $cookies.remove("authenticated");
@@ -263,21 +271,21 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 
 	$scope.showLogin = function() {
 		$rootScope.loginModal = $uibModal.open({
-            templateUrl: "./templates/login-modal.html",
+            templateUrl: "./templates/modal/login-modal.html",
             controller: "headerController"
 		});
 	};
 
 	$scope.showRegister = function() {
 		$rootScope.registerModal = $uibModal.open({
-            templateUrl: "./templates/register-modal.html",
+            templateUrl: "./templates/modal/register-modal.html",
             controller: "headerController"
 		});
 	};
 
 	$scope.showReservation = function(){
         $rootScope.reservationModal = $uibModal.open({
-            templateUrl: "./templates/reservation-modal.html",
+            templateUrl: "./templates/modal/reservation-modal.html",
             controller: "CalendarCtrl",
             size: "lg"
         });
@@ -410,6 +418,18 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 
     $scope.isAdmin = function(){
         return $scope.isAuthenticated() && $cookies.get("isAdmin");
+    }
+
+    $scope.showUsersButton = function(){
+        return $scope.isAdmin() && $location.path() != "/users";
+    }
+
+    $scope.showCalendarButton = function(){
+        return $scope.isAdmin() && $location.path() == "/users";
+    }
+
+    $scope.showAddReservationButton = function(){
+        return $scope.isAuthenticated() && $location.path() != "/users";
     }
 
 });
