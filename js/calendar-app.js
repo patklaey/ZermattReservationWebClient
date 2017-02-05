@@ -417,7 +417,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
     };
 
     $scope.isAdmin = function(){
-        return $scope.isAuthenticated() && $cookies.get("isAdmin");
+        return $scope.isAuthenticated() && $cookies.getObject(COOKIE_KEYS.IS_ADMIN);
     }
 
     $scope.showUsersButton = function(){
@@ -439,7 +439,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                             console.log(response.data);
                             $rootScope.allUsers = response.data;
                         }, function(response) {
-                            $scope.showErrorToast("<strong>Cannot load users</stong><br/>" + response.data.error);
+                            $scope.showErrorToast("<strong>Cannot load users</strong><br/>" + response.data.error);
+                            $location.path("/");
                         }
             );
         }
