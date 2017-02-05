@@ -261,6 +261,70 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
 
 });
 
+
+myAppModule.controller('userController', function($scope, $rootScope, $http, $sce, ngToast, CONFIG, $cookies, COOKIE_KEYS) {
+
+    $scope.updateUser = function() {
+        var userId = $scope.user.id;
+        var newUser = {}
+
+        if($scope.editUserForm.username.$dirty){
+            newUser.username = $scope.user.username;
+        }
+        if($scope.editUserForm.email.$dirty){
+            newUser.email = $scope.user.email;
+        }
+        if($scope.editUserForm.password.$dirty){
+            newUser.password = $scope.user.password;
+        }
+        if($scope.editUserForm.active.$dirty){
+            newUser.avtive = $scope.user.active;
+        }
+        if($scope.editUserForm.admin.$dirty){
+            newUser.admin = $scope.user.admin;
+        }
+
+        console.log(newUser);
+
+        $http.put(CONFIG.API_ENDPOINT + '/users/' + userId,JSON.stringify(newUser))
+            .then(function(response) {
+                $scope.showInfoToast("User updated!");
+            }, function(response) {
+                if( response ){
+                    $scope.showErrorToast("Could not update user:<br>" + response.status + ": " + response.data.error + "!");
+                }
+                else{
+                    $scope.showErrorToast("Could not update user!");
+                }
+            }
+        );
+    }
+
+    $scope.deleteUser = function(){
+        alert("Delete user " + $scope.user.id)
+    }
+
+    $scope.showErrorToast = function(message){
+        ngToast.danger({
+            content: $sce.trustAsHtml('<div class="error-toast">' + message + '</div>'),
+            timeout: 10000,
+            dismissOnClick: false,
+            dismissButton: true
+        });
+    };
+
+    $scope.showWarningToast = function(message){
+        ngToast.warning({
+            content: $sce.trustAsHtml('<div class="warning-toast">' + message + '</div>'),
+            timeout: 5000,
+            dismissOnClick: false,
+            dismissButton: true
+        });
+    };
+
+});
+
+
 myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location) {
 
     $scope.logout= function() {
@@ -366,8 +430,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             .then(function(response) {
                 if(response.data && response.data.token) {
                     $scope.loginFailed = false;
-                    ngToast.create("Login success!");
                     $scope.setupUser(response.data.token);
+                    ngToast.create("Login success!<br/>Hello " + $rootScope.currentUser);
                     $rootScope.loginModal.close("Successful login");
                 }
             }, function(response) {
@@ -436,7 +500,6 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         if( $location.path() === '/users'){
             $http.get(CONFIG.API_ENDPOINT + '/users')
                         .then(function(response) {
-                            console.log(response.data);
                             $rootScope.allUsers = response.data;
                         }, function(response) {
                             $scope.showErrorToast("<strong>Cannot load users</strong><br/>" + response.data.error);
