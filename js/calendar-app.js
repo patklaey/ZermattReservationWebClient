@@ -278,7 +278,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
             newUser.password = $scope.user.password;
         }
         if($scope.editUserForm.active.$dirty){
-            newUser.avtive = $scope.user.active;
+            newUser.active = $scope.user.active;
         }
         if($scope.editUserForm.admin.$dirty){
             newUser.admin = $scope.user.admin;
@@ -303,6 +303,10 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
     $scope.deleteUser = function(){
         alert("Delete user " + $scope.user.id)
     }
+
+    $scope.showInfoToast = function(message) {
+        ngToast.create(message);
+    };
 
     $scope.showErrorToast = function(message){
         ngToast.danger({
