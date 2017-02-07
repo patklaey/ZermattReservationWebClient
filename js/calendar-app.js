@@ -1,4 +1,4 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners']);
 
 myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -329,7 +329,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 });
 
 
-myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService) {
 
     $scope.logout= function() {
         $cookies.remove("authenticated");
@@ -387,22 +387,27 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             email: $scope.user.email
         };
 
+        spinnerService.show('registerSpinner');
+
         $http.post(CONFIG.API_ENDPOINT + '/users',JSON.stringify(user))
-            .then(function() {
+            .success(function() {
                 ngToast.create({
                     timeout: 10000,
                     content: $sce.trustAsHtml("Registration success!<br/>You should have received a mail with further information")
                 });
                 $rootScope.registerModal.close("Successful registration");
-            }, function(response) {
+            })
+            .catch(function(response) {
                 if( response ){
                     $scope.showErrorToast("Registration failed:<br/>" + response.status + ": " + response.data.error + "!");
                 }
                 else{
                     $scope.showErrorToast("Registration failed!");
                 }
-            }
-        );
+            })
+            .finally(function() {
+                spinnerService.hide('registerSpinner');
+            });
     };
 
     $scope.authenticate = function() {
