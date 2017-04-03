@@ -5,7 +5,7 @@
 <form name="registerForm" ng-submit="register()" novalidate>
 
     <div class="modal-body">
-        <spinner name="registerSpinner" img-src="./resources/animal.gif"></spinner>
+        <spinner name="registerSpinner" img-src="./resources/default.gif"></spinner>
         <div ng-class="{ 'has-error': registerForm.username.$invalid && registerForm.username.$touched }">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
@@ -51,7 +51,9 @@
                 <p ng-message="compareTo">Passwords don't match.</p>
             </div>
         </div>
-
+        <div style="text-align:center">
+            <spinner name="registerSpinner" img-src="./resources/default.gif">Registering ... </spinner>
+        </div>
     </div>
 
     <div class="modal-footer">

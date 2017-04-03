@@ -112,7 +112,7 @@ myAppModule.run(function($rootScope, $cookies){
     $rootScope.currentUser = $cookies.get("username");
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -196,6 +196,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.addEvent = function(event) {
+        spinnerService.show('addReservationSpinner');
         $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event))
             .then(function(response) {
                 event.id = response.data.id;
@@ -203,6 +204,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
                 $rootScope.$broadcast('event-added');
+                spinnerService.show('addReservationSpinner');
             }, function(response) {
                 if( response ){
                     $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data.error + "!");
@@ -210,6 +212,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
                 else{
                     $scope.showErrorToast("Could not add reservation!");
                 }
+                spinnerService.show('addReservationSpinner');
             }
         );
     };
@@ -435,6 +438,9 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
            'Authorization': 'Basic ' + base64_creds
          }
         };
+
+        spinnerService.show('loginSpinner');
+
         $http(req)
             .then(function(response) {
                 if(response.data && response.data.token) {
@@ -443,6 +449,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     ngToast.create("Login success!<br/>Hello " + $rootScope.currentUser);
                     $rootScope.loginModal.close("Successful login");
                 }
+                spinnerService.hide('loginSpinner');
             }, function(response) {
                 if( response && response.data ) {
                     if( response.status == 401 ) {
@@ -453,6 +460,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 } else {
                     $scope.showErrorToast("An unknown error occured<br/>Please try again later or contact the administrator.");
                 }
+                spinnerService.hide('loginSpinner');
             }
         );
     };
