@@ -1,4 +1,4 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners']);
 
 myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -73,7 +73,7 @@ myAppModule.directive("compareTo", function() {
    };
 });
 
-myAppModule.directive("datepicker", function () {
+myAppModule.directive("datepicker", function ($rootScope) {
     return {
         restrict: "A",
         require: "ngModel",
@@ -97,6 +97,7 @@ myAppModule.directive("datepicker", function () {
             locale: 'de',
             toolbarPlacement: 'top',
             showClear: true,
+            defaultDate: $rootScope.selectedDate,
             format: "DD.MM.YYYY HH:mm Z",
             showTodayButton: true
         });
@@ -110,9 +111,10 @@ myAppModule.directive("datepicker", function () {
 
 myAppModule.run(function($rootScope, $cookies){
     $rootScope.currentUser = $cookies.get("username");
+    $rootScope.selectedDate = false;
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -159,6 +161,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.onTimeSelected = function (selectedTime) {
+        $rootScope.selectedDate = selectedTime;
     };
 
     $scope.addReservation = function() {
@@ -196,6 +199,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.addEvent = function(event) {
+        spinnerService.show('addReservationSpinner');
         $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event))
             .then(function(response) {
                 event.id = response.data.id;
@@ -203,6 +207,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
                 $rootScope.$broadcast('event-added');
+                spinnerService.show('addReservationSpinner');
             }, function(response) {
                 if( response ){
                     $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data.error + "!");
@@ -210,6 +215,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
                 else{
                     $scope.showErrorToast("Could not add reservation!");
                 }
+                spinnerService.show('addReservationSpinner');
             }
         );
     };
@@ -329,7 +335,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 });
 
 
-myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService) {
 
     $scope.logout= function() {
         $cookies.remove("authenticated");
@@ -387,22 +393,27 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             email: $scope.user.email
         };
 
+        spinnerService.show('registerSpinner');
+
         $http.post(CONFIG.API_ENDPOINT + '/users',JSON.stringify(user))
-            .then(function() {
+            .success(function() {
                 ngToast.create({
                     timeout: 10000,
                     content: $sce.trustAsHtml("Registration success!<br/>You should have received a mail with further information")
                 });
                 $rootScope.registerModal.close("Successful registration");
-            }, function(response) {
+            })
+            .catch(function(response) {
                 if( response ){
                     $scope.showErrorToast("Registration failed:<br/>" + response.status + ": " + response.data.error + "!");
                 }
                 else{
                     $scope.showErrorToast("Registration failed!");
                 }
-            }
-        );
+            })
+            .finally(function() {
+                spinnerService.hide('registerSpinner');
+            });
     };
 
     $scope.authenticate = function() {
@@ -430,6 +441,9 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
            'Authorization': 'Basic ' + base64_creds
          }
         };
+
+        spinnerService.show('loginSpinner');
+
         $http(req)
             .then(function(response) {
                 if(response.data && response.data.token) {
@@ -438,6 +452,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     ngToast.create("Login success!<br/>Hello " + $rootScope.currentUser);
                     $rootScope.loginModal.close("Successful login");
                 }
+                spinnerService.hide('loginSpinner');
             }, function(response) {
                 if( response && response.data ) {
                     if( response.status == 401 ) {
@@ -448,6 +463,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 } else {
                     $scope.showErrorToast("An unknown error occured<br/>Please try again later or contact the administrator.");
                 }
+                spinnerService.hide('loginSpinner');
             }
         );
     };
