@@ -73,7 +73,7 @@ myAppModule.directive("compareTo", function() {
    };
 });
 
-myAppModule.directive("datepicker", function () {
+myAppModule.directive("datepicker", function ($rootScope) {
     return {
         restrict: "A",
         require: "ngModel",
@@ -97,6 +97,7 @@ myAppModule.directive("datepicker", function () {
             locale: 'de',
             toolbarPlacement: 'top',
             showClear: true,
+            defaultDate: $rootScope.selectedDate,
             format: "DD.MM.YYYY HH:mm Z",
             showTodayButton: true
         });
@@ -110,6 +111,7 @@ myAppModule.directive("datepicker", function () {
 
 myAppModule.run(function($rootScope, $cookies){
     $rootScope.currentUser = $cookies.get("username");
+    $rootScope.selectedDate = false;
 });
 
 myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
@@ -159,6 +161,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.onTimeSelected = function (selectedTime) {
+        $rootScope.selectedDate = selectedTime;
     };
 
     $scope.addReservation = function() {
