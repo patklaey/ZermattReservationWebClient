@@ -22,7 +22,8 @@ myAppModule.constant("CONFIG", {
 myAppModule.constant("COOKIE_KEYS", {
     "USERNAME":"username",
     "AUTHENTICATED": "authenticated",
-    "IS_ADMIN": "isAdmin"
+    "IS_ADMIN": "isAdmin",
+    "USERID": "userId"
 });
 
 myAppModule.service('AuthService', function($http, CONFIG){
@@ -81,40 +82,45 @@ myAppModule.directive("datepicker", function ($rootScope) {
         link: function (scope, elem, attrs, ngModelCtrl) {
             var updateModel = function (event) {
 
-            scope.$apply(function () {
-                ngModelCtrl.$modelValue = elem.val();
-                var ngModelNameArray = elem["0"].attributes["ng-model"].value.split(".");
-                if(!scope.event){
-                    scope.event = {};
-                }
-                scope.event[ngModelNameArray[1]] = event.date.toDate();
+                scope.$apply(function () {
+                    ngModelCtrl.$modelValue = elem.val();
+                    var ngModelNameArray = elem["0"].attributes["ng-model"].value.split(".");
+                    if(!scope.event){
+                        scope.event = {};
+                    }
+                    scope.event[ngModelNameArray[1]] = event.date.toDate();
+                });
+            };
+
+            var pickerDate = $rootScope.selectedDate;
+
+            elem.datetimepicker({
+                inline: true,
+                sideBySide: true,
+                locale: 'de',
+                toolbarPlacement: 'top',
+                showClear: true,
+                defaultDate: pickerDate,
+                format: "DD.MM.YYYY HH:mm Z",
+                showTodayButton: true
             });
-        };
 
-        elem.datetimepicker({
-            inline: true,
-            sideBySide: true,
-            locale: 'de',
-            toolbarPlacement: 'top',
-            showClear: true,
-            defaultDate: $rootScope.selectedDate,
-            format: "DD.MM.YYYY HH:mm Z",
-            showTodayButton: true
-        });
-
-        elem.on("dp.change",function (e) {
-            updateModel(e);
-        });
+            elem.on("dp.change",function (e) {
+                updateModel(e);
+            });
+        }
     }
-}
 });
 
-myAppModule.run(function($rootScope, $cookies){
-    $rootScope.currentUser = $cookies.get("username");
+myAppModule.run(function($rootScope, $cookies, COOKIE_KEYS){
+    $rootScope.currentUser = {
+        username: $cookies.get(COOKIE_KEYS.USERNAME),
+        id: $cookies.get(COOKIE_KEYS.USERID)
+    };
     $rootScope.selectedDate = new Date();
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -158,10 +164,21 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
     };
 
     $scope.onEventSelected = function (event) {
+        $scope.currentEvent = event;
+        $scope.showRegisterModal = $uibModal.open({
+            templateUrl: "./templates/modal/show-reservation-modal.html",
+            scope: $scope
+        });
     };
 
     $scope.onTimeSelected = function (selectedTime) {
         $rootScope.selectedDate = selectedTime;
+    };
+
+    $scope.cancelEditReservation = function() {
+        if($scope.showRegisterModal){
+            $scope.showRegisterModal.dismiss("User canceled");
+        }
     };
 
     $scope.addReservation = function() {
@@ -304,11 +321,11 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
                 }
             }
         );
-    }
+    };
 
     $scope.deleteUser = function(){
         alert("Delete user " + $scope.user.id)
-    }
+    };
 
     $scope.showInfoToast = function(message) {
         ngToast.create(message);
@@ -338,9 +355,10 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService) {
 
     $scope.logout= function() {
-        $cookies.remove("authenticated");
-        $cookies.remove("username");
-        $cookies.remove("isAdmin");
+        $cookies.remove(COOKIE_KEYS.AUTHENTICATED);
+        $cookies.remove(COOKIE_KEYS.USERNAME);
+        $cookies.remove(COOKIE_KEYS.USERID);
+        $cookies.remove(COOKIE_KEYS.IS_ADMIN);
     };
 
 	$scope.showLogin = function() {
@@ -359,7 +377,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 
 	$scope.showReservation = function(){
         $rootScope.reservationModal = $uibModal.open({
-            templateUrl: "./templates/modal/reservation-modal.html",
+            templateUrl: "./templates/modal/new-reservation-modal.html",
             controller: "CalendarCtrl",
             size: "lg"
         });
@@ -449,7 +467,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 if(response.data && response.data.token) {
                     $scope.loginFailed = false;
                     $scope.setupUser(response.data.token);
-                    ngToast.create("Login success!<br/>Hello " + $rootScope.currentUser);
+                    ngToast.create("Login success!<br/>Hello " + $rootScope.currentUser.username);
                     $rootScope.loginModal.close("Successful login");
                 }
                 spinnerService.hide('loginSpinner');
@@ -472,8 +490,12 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         var token_parts = token.split(".");
         var headers = JSON.parse(window.atob(token_parts[0]));
         var payload = JSON.parse(window.atob(token_parts[1]));
-        $rootScope.currentUser = payload.user_claims.username;
+        $rootScope.currentUser = {
+            username: payload.user_claims.username,
+            id: payload.user_claims.userId
+        };
         $cookies.put(COOKIE_KEYS.USERNAME, payload.user_claims.username);
+        $cookies.put(COOKIE_KEYS.USERID, payload.user_claims.userId);
         $cookies.put(COOKIE_KEYS.AUTHENTICATED,true);
         $cookies.put(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
     };
@@ -502,19 +524,19 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 
     $scope.isAdmin = function(){
         return $scope.isAuthenticated() && $cookies.getObject(COOKIE_KEYS.IS_ADMIN);
-    }
+    };
 
     $scope.showUsersButton = function(){
         return $scope.isAdmin() && $location.path() != "/users";
-    }
+    };
 
     $scope.showCalendarButton = function(){
         return $scope.isAdmin() && $location.path() == "/users";
-    }
+    };
 
     $scope.showAddReservationButton = function(){
         return $scope.isAuthenticated() && $location.path() != "/users";
-    }
+    };
 
     $scope.$on("$routeChangeSuccess", function($currentRoute, $previousRoute) {
         if( $location.path() === '/users'){
