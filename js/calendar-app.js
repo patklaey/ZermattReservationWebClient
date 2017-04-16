@@ -111,7 +111,7 @@ myAppModule.directive("datepicker", function ($rootScope) {
 
 myAppModule.run(function($rootScope, $cookies){
     $rootScope.currentUser = $cookies.get("username");
-    $rootScope.selectedDate = false;
+    $rootScope.selectedDate = new Date();
 });
 
 myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
@@ -181,13 +181,13 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $http, $sce
         if ($scope.event && $scope.event.startDate ){
             startDate = $scope.event.startDate;
         } else {
-            startDate = moment().toDate();
+            startDate = $scope.selectedDate;
         }
 
         if ($scope.event && $scope.event.endDate) {
             endDate = $scope.event.endDate;
         } else {
-            endDate = moment().toDate();
+            endDate = $scope.selectedDate;
         }
 
         if ($scope.event && $scope.event.allDay){
