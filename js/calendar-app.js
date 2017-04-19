@@ -364,6 +364,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService) {
 
     $scope.logout= function() {
+        $http.post(CONFIG.API_ENDPOINT + '/logout');
         $cookies.remove(COOKIE_KEYS.AUTHENTICATED);
         $cookies.remove(COOKIE_KEYS.USERNAME);
         $cookies.remove(COOKIE_KEYS.USERID);
