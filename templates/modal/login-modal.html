@@ -8,7 +8,7 @@
         <div  ng-class="{ 'has-error': loginForm.username.$invalid && loginForm.username.$touched}">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                <input id="username" type="text" class="form-control" name="username" placeholder="Username" ng-model="username" required>
+                <input id="username" type="text" autofocus class="form-control" name="username" placeholder="Username" ng-model="username" required>
             </div>
             <div class="help-block" ng-messages="loginForm.username.$error" ng-if="loginForm.username.$touched">
                 <p ng-message="required">Your username is required.</p>

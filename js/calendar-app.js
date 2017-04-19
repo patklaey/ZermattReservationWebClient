@@ -94,6 +94,10 @@ myAppModule.directive("datepicker", function ($rootScope) {
 
             var pickerDate = $rootScope.selectedDate;
 
+            if( attrs.predefinedDate ){
+                pickerDate = moment(attrs.predefinedDate, "YYYY-MM-DDTHH:mm:ss.SSSZ");
+            }
+
             elem.datetimepicker({
                 inline: true,
                 sideBySide: true,
@@ -165,9 +169,10 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 
     $scope.onEventSelected = function (event) {
         $scope.currentEvent = event;
-        $scope.showRegisterModal = $uibModal.open({
+        $scope.showReservationModal = $uibModal.open({
             templateUrl: "./templates/modal/show-reservation-modal.html",
-            scope: $scope
+            scope: $scope,
+            size: "lg"
         });
     };
 
@@ -176,9 +181,13 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
     };
 
     $scope.cancelEditReservation = function() {
-        if($scope.showRegisterModal){
-            $scope.showRegisterModal.dismiss("User canceled");
+        if($scope.showReservationModal){
+            $scope.showReservationModal.dismiss("User canceled");
         }
+    };
+
+    $scope.deleteReservation = function (reservationId) {
+        alert("Deleting reservation " + reservationId);
     };
 
     $scope.addReservation = function() {
@@ -359,6 +368,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $cookies.remove(COOKIE_KEYS.USERNAME);
         $cookies.remove(COOKIE_KEYS.USERID);
         $cookies.remove(COOKIE_KEYS.IS_ADMIN);
+        $rootScope.currentUser = undefined;
     };
 
 	$scope.showLogin = function() {

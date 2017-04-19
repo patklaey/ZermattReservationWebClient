@@ -6,14 +6,45 @@
     <div class="modal-body container col-md-12">
         <div class="row">
             <div class="col-md-12">
-                {{currentEvent.startTime}}<br/>
-                {{currentEvent.endTime}}<br/>
-                {{currentEvent.allDay}}<br/>
+                <div class='input-group date form-group'>
+                    <label style="margin-right: 5px" for="allDay">All Day:</label>
+                    <input id="allDay" name="allDay" type="checkbox" ng-model="event.allDay"/>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <div class='input-group date form-group'>
+                    <label for="startDate">From:</label>
+                    <div id="startDate" ng-model="event.startDate" predefined-date="{{currentEvent.startTime}}" datepicker="startDate"></div>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class='input-group date form-group'>
+                    <label for="startDate">To:</label>
+                    <div id="endDate" ng-model="event.endDate" predefined-date="{{currentEvent.endTime}}" datepicker="endDate"></div>
+                </div>
             </div>
         </div>
     </div>
     <div class="modal-footer">
+        <button style="float: left" type="button" class="btn btn-danger" ng-show="currentEvent.userId == currentUser.id" ng-click="deleteReservation(currentEvent.id)">Delete</button>
         <button type="button" class="btn btn-warning" ng-click="cancelEditReservation()">Cancel</button>
-        <button type="submit" ng-show="currentEvent.userId == currentUser.id" class="btn btn-primary">Edit</button>
+        <button type="submit" ng-show="currentEvent.userId == currentUser.id" class="btn btn-primary">Update</button>
     </div>
 </form>
+
+<script type="text/javascript">
+    $(function () {
+        $('#startDate').datetimepicker();
+        $('#endDate').datetimepicker({
+            useCurrent: false
+        });
+        $("#startDate").on("dp.change", function (e) {
+            $('#endDate').data("DateTimePicker").minDate(e.date);
+        });
+        $("#endDate").on("dp.change", function (e) {
+            $('#startDate').data("DateTimePicker").maxDate(e.date);
+        });
+    });
+</script>
