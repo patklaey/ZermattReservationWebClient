@@ -227,23 +227,25 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
     $scope.addEvent = function(event) {
         spinnerService.show('addReservationSpinner');
         $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event))
-            .then(function(response) {
+            .success(function(response) {
                 event.id = response.data.id;
                 $scope.showInfoToast("Event added!");
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
                 $rootScope.$broadcast('event-added');
                 spinnerService.show('addReservationSpinner');
-            }, function(response) {
+            })
+            .catch(function(response) {
                 if( response ){
                     $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data.error + "!");
                 }
                 else{
                     $scope.showErrorToast("Could not add reservation!");
                 }
-                spinnerService.show('addReservationSpinner');
-            }
-        );
+            })
+            .finally(function () {
+                spinnerService.hide('addReservationSpinner');
+            });
     };
 
     $scope.addEventLocally = function(event) {
@@ -298,7 +300,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 
     $scope.updateUser = function() {
         var userId = $scope.user.id;
-        var newUser = {}
+        var newUser = {};
 
         if($scope.editUserForm.username.$dirty){
             newUser.username = $scope.user.username;
@@ -315,8 +317,6 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
         if($scope.editUserForm.admin.$dirty){
             newUser.admin = $scope.user.admin;
         }
-
-        console.log(newUser);
 
         $http.put(CONFIG.API_ENDPOINT + '/users/' + userId,JSON.stringify(newUser))
             .then(function(response) {
@@ -370,6 +370,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $cookies.remove(COOKIE_KEYS.USERID);
         $cookies.remove(COOKIE_KEYS.IS_ADMIN);
         $rootScope.currentUser = undefined;
+        $location.path("/");
     };
 
 	$scope.showLogin = function() {
@@ -555,7 +556,13 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                         .then(function(response) {
                             $rootScope.allUsers = response.data;
                         }, function(response) {
-                            $scope.showErrorToast("<strong>Cannot load users</strong><br/>" + response.data.error);
+                            if( response.data.error ){
+                                $scope.showErrorToast("<strong>Cannot load users</strong><br/>" + response.data.error);
+                            } else if( response.data.msg ){
+                                $scope.showErrorToast("<strong>Cannot load users</strong><br/>Please login again to access this page");
+                            } else {
+                                $scope.showErrorToast("<strong>Cannot load users</strong><br/>Please try again or contact the administrator");
+                            }
                             $location.path("/");
                         }
             );
