@@ -186,6 +186,30 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         }
     };
 
+    $scope.updateReservation = function(){
+        var eventToUpdate = {};
+        if (this.event.startDate){
+            eventToUpdate.startTime = this.event.startDate;
+        }
+        if (this.event.endDate){
+            eventToUpdate.endTime = this.event.endDate;
+        }
+
+        $http.put(CONFIG.API_ENDPOINT + '/reservations/' + $scope.currentEvent.id,JSON.stringify(eventToUpdate))
+            .then(function(response) {
+                    $scope.showInfoToast("Event updated!");
+                }, function(response) {
+                    if( response ){
+                        $scope.showErrorToast("Could not update event:<br>" + response.status + ": " + response.data.error + "!");
+                    }
+                    else{
+                        $scope.showErrorToast("Could not update event!");
+                    }
+                }
+            );
+
+    };
+
     $scope.deleteReservation = function (reservationId) {
         alert("Deleting reservation " + reservationId);
     };
