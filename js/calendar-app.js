@@ -23,7 +23,8 @@ myAppModule.constant("COOKIE_KEYS", {
     "USERNAME":"username",
     "AUTHENTICATED": "authenticated",
     "IS_ADMIN": "isAdmin",
-    "USERID": "userId"
+    "USERID": "userId",
+    "EXPIRE_DATE": "expireDate"
 });
 
 myAppModule.service('AuthService', function($http, CONFIG){
@@ -117,11 +118,20 @@ myAppModule.directive("datepicker", function ($rootScope) {
 });
 
 myAppModule.run(function($rootScope, $cookies, COOKIE_KEYS){
-    $rootScope.currentUser = {
-        username: $cookies.get(COOKIE_KEYS.USERNAME),
-        id: $cookies.get(COOKIE_KEYS.USERID)
-    };
-    $rootScope.selectedDate = new Date();
+    try {
+        var exp = $cookies.getObject(COOKIE_KEYS.EXPIRE_DATE);
+    } finally {
+        var now = moment();
+        if ( ! exp || now.isAfter(exp) ) {
+            $rootScope.$broadcast("logout-event");
+        } else {
+            $rootScope.currentUser = {
+                username: $cookies.get(COOKIE_KEYS.USERNAME),
+                id: $cookies.get(COOKIE_KEYS.USERID)
+            };
+        }
+        $rootScope.selectedDate = new Date();
+    }
 });
 
 myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
@@ -391,6 +401,10 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 
 myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService) {
 
+    $rootScope.$on('logout-event', function(event){
+        $scope.logout();
+    });
+
     $scope.logout= function() {
         $http.post(CONFIG.API_ENDPOINT + '/logout');
         $cookies.remove(COOKIE_KEYS.AUTHENTICATED);
@@ -507,7 +521,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 if(response.data && response.data.token) {
                     $scope.loginFailed = false;
                     $scope.setupUser(response.data.token);
-                    ngToast.create("Login success!<br/>Hello " + $rootScope.currentUser.username);
+                    ngToast.create("<strong>Login success!</strong><br/>Hello " + $rootScope.currentUser.username);
                     $rootScope.loginModal.close("Successful login");
                 }
                 spinnerService.hide('loginSpinner');
@@ -528,7 +542,6 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 
     $scope.setupUser = function(token){
         var token_parts = token.split(".");
-        var headers = JSON.parse(window.atob(token_parts[0]));
         var payload = JSON.parse(window.atob(token_parts[1]));
         $rootScope.currentUser = {
             username: payload.user_claims.username,
@@ -538,6 +551,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $cookies.put(COOKIE_KEYS.USERID, payload.user_claims.userId);
         $cookies.put(COOKIE_KEYS.AUTHENTICATED,true);
         $cookies.put(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
+        $cookies.putObject(COOKIE_KEYS.EXPIRE_DATE, moment.unix(payload.exp))
     };
 
     $scope.showErrorToast = function(message){
