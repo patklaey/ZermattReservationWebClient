@@ -208,7 +208,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         }
 
         $http.put(CONFIG.API_ENDPOINT + '/reservations/' + $scope.currentEvent.id,JSON.stringify(eventToUpdate))
-            .then(function(response) {
+            .then(function() {
                     $scope.showInfoToast("Event updated!");
 
                     $scope.showReservationModal.close();
@@ -288,7 +288,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 
     $scope.addEventLocally = function(event) {
         var events = $rootScope.eventSource;
-        if( events == null || events == undefined ){
+        if( events === null || events === undefined ){
             events = [];
         }
         events.push(event);
@@ -357,7 +357,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
         }
 
         $http.put(CONFIG.API_ENDPOINT + '/users/' + userId,JSON.stringify(newUser))
-            .then(function(response) {
+            .then(function() {
                 $scope.showInfoToast("User updated!");
             }, function(response) {
                 if( response ){
@@ -401,7 +401,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 
 myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService) {
 
-    $rootScope.$on('logout-event', function(event){
+    $rootScope.$on('logout-event', function(){
         $scope.logout();
     });
 
@@ -473,7 +473,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     timeout: 10000,
                     content: $sce.trustAsHtml("Registration success!<br/>You should have received a mail with further information")
                 });
-                $rootScope.registerModal.close("Successful registration");
+                $rootScope.registerModal.close();
             })
             .catch(function(response) {
                 if( response ){
@@ -527,7 +527,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 spinnerService.hide('loginSpinner');
             }, function(response) {
                 if( response && response.data ) {
-                    if( response.status == 401 ) {
+                    if( response.status === 401 ) {
                         $scope.loginFailed = true;
                     } else {
                         $scope.showErrorToast("Login Failed:<br/>" + response.data + "!");
@@ -581,15 +581,15 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
     };
 
     $scope.showUsersButton = function(){
-        return $scope.isAdmin() && $location.path() != "/users";
+        return $scope.isAdmin() && $location.path() !== "/users";
     };
 
     $scope.showCalendarButton = function(){
-        return $scope.isAdmin() && $location.path() == "/users";
+        return $scope.isAdmin() && $location.path() === "/users";
     };
 
     $scope.showAddReservationButton = function(){
-        return $scope.isAuthenticated() && $location.path() != "/users";
+        return $scope.isAuthenticated() && $location.path() !== "/users";
     };
 
     $scope.$on("$routeChangeSuccess", function($currentRoute, $previousRoute) {
