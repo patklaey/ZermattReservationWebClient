@@ -210,7 +210,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         $http.put(CONFIG.API_ENDPOINT + '/reservations/' + $scope.currentEvent.id,JSON.stringify(eventToUpdate))
             .then(function() {
                     $scope.showInfoToast("Event updated!");
-
+                    $rootScope.$broadcast('event-source-changed');
                     $scope.showReservationModal.close();
                 }, function(response) {
                     if( response ){
@@ -266,11 +266,11 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         spinnerService.show('addReservationSpinner');
         $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event))
             .success(function(response) {
-                event.id = response.data.id;
+                event.id = response.id;
                 $scope.showInfoToast("Event added!");
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
-                $rootScope.$broadcast('event-added');
+                $rootScope.$broadcast('event-source-changed');
                 spinnerService.show('addReservationSpinner');
             })
             .catch(function(response) {
@@ -323,7 +323,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         });
     };
 
-    $rootScope.$on('event-added', function(){
+    $rootScope.$on('event-source-changed', function(){
         $scope.$broadcast('eventSourceChanged',$rootScope.eventSource);
     });
 
