@@ -1,4 +1,30 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners'])
+    .constant("CONFIG", {
+        "API_ENDPOINT": "http://localhost:5000"
+    })
+    .constant("COOKIE_KEYS", {
+        "USERNAME":"username",
+        "AUTHENTICATED": "authenticated",
+        "IS_ADMIN": "isAdmin",
+        "USERID": "userId",
+        "EXPIRE_DATE": "expireDate"
+    })
+    .run(function($rootScope, $cookies, COOKIE_KEYS){
+        try {
+            var exp = $cookies.getObject(COOKIE_KEYS.EXPIRE_DATE);
+        } finally {
+            var now = moment();
+            if ( ! exp || now.isAfter(exp) ) {
+                $rootScope.$broadcast("logout-event");
+            } else {
+                $rootScope.currentUser = {
+                    username: $cookies.get(COOKIE_KEYS.USERNAME),
+                    id: $cookies.get(COOKIE_KEYS.USERID)
+                };
+            }
+            $rootScope.selectedDate = new Date();
+        }
+    });
 
 myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -14,18 +40,6 @@ myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $
             });
     }
 ]);
-
-myAppModule.constant("CONFIG", {
-    "API_ENDPOINT": "http://localhost:5000"
-});
-
-myAppModule.constant("COOKIE_KEYS", {
-    "USERNAME":"username",
-    "AUTHENTICATED": "authenticated",
-    "IS_ADMIN": "isAdmin",
-    "USERID": "userId",
-    "EXPIRE_DATE": "expireDate"
-});
 
 myAppModule.service('AuthService', function($http, CONFIG){
     this.checkUniqueValue = function(property, value) {
@@ -114,23 +128,6 @@ myAppModule.directive("datepicker", function ($rootScope) {
                 updateModel(e);
             });
         }
-    }
-});
-
-myAppModule.run(function($rootScope, $cookies, COOKIE_KEYS){
-    try {
-        var exp = $cookies.getObject(COOKIE_KEYS.EXPIRE_DATE);
-    } finally {
-        var now = moment();
-        if ( ! exp || now.isAfter(exp) ) {
-            $rootScope.$broadcast("logout-event");
-        } else {
-            $rootScope.currentUser = {
-                username: $cookies.get(COOKIE_KEYS.USERNAME),
-                id: $cookies.get(COOKIE_KEYS.USERID)
-            };
-        }
-        $rootScope.selectedDate = new Date();
     }
 });
 
@@ -361,7 +358,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 });
 
 
-myAppModule.controller('userController', function($scope, $rootScope, $http, $sce, ngToast, CONFIG, $cookies, COOKIE_KEYS) {
+myAppModule.controller('userController', function($scope, $rootScope, $http, $sce, ngToast, CONFIG) {
 
     $scope.updateUser = function() {
         var userId = $scope.user.id;
@@ -398,7 +395,21 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
     };
 
     $scope.deleteUser = function(){
-        alert("Delete user " + $scope.user.id)
+        $http.delete(CONFIG.API_ENDPOINT + '/users/' + $scope.user.id)
+            .success(function(response) {
+                $scope.showInfoToast("User successfully removed!");
+            })
+            .catch(function(response) {
+                if( response ){
+                    $scope.showErrorToast("Could not remove user:<br>" + response.status + ": " + response.data.error + "!");
+                }
+                else{
+                    $scope.showErrorToast("Could not remove user!");
+                }
+            });
+//            .finally(function () {
+//                spinnerService.hide('deleteReservationSpinner');
+//            });
     };
 
     $scope.showInfoToast = function(message) {
