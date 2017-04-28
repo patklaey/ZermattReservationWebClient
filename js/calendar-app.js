@@ -207,25 +207,53 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
             $scope.currentEvent.endTime = this.event.endDate;
         }
 
+        spinnerService.show('editReservationSpinner');
         $http.put(CONFIG.API_ENDPOINT + '/reservations/' + $scope.currentEvent.id,JSON.stringify(eventToUpdate))
-            .then(function() {
+            .success(function() {
                     $scope.showInfoToast("Event updated!");
                     $rootScope.$broadcast('event-source-changed');
                     $scope.showReservationModal.close();
-                }, function(response) {
-                    if( response ){
-                        $scope.showErrorToast("Could not update event:<br>" + response.status + ": " + response.data.error + "!");
-                    }
-                    else{
-                        $scope.showErrorToast("Could not update event!");
-                    }
+            })
+            .catch(function(response) {
+                if( response ){
+                    $scope.showErrorToast("Could not update event:<br>" + response.status + ": " + response.data.error + "!");
                 }
-            );
+                else{
+                    $scope.showErrorToast("Could not update event!");
+                }
+            })
+            .finally(function () {
+                spinnerService.hide('editReservationSpinner');
+            })
 
     };
 
+    $scope.removeEventLocally = function (reservationId) {
+        $rootScope.eventSource = $.grep($rootScope.eventSource, function(event){
+            return event.id !== reservationId;
+        });
+    };
+
     $scope.deleteReservation = function (reservationId) {
-        alert("Deleting reservation " + reservationId);
+        spinnerService.show('deleteReservationSpinner');
+        $http.delete(CONFIG.API_ENDPOINT + '/reservations/' + reservationId)
+            .success(function(response) {
+                $scope.showInfoToast("Event successfully removed!");
+                $scope.showReservationModal.close();
+                $scope.removeEventLocally(reservationId);
+                $rootScope.$broadcast('event-source-changed');
+            })
+            .catch(function(response) {
+                if( response ){
+                    $scope.showErrorToast("Could not remove reservation:<br>" + response.status + ": " + response.data.error + "!");
+                }
+                else{
+                    $scope.showErrorToast("Could not remove reservation!");
+                }
+            })
+            .finally(function () {
+                spinnerService.hide('deleteReservationSpinner');
+            });
     };
 
     $scope.addReservation = function() {
@@ -271,7 +299,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
                 $rootScope.$broadcast('event-source-changed');
-                spinnerService.show('addReservationSpinner');
             })
             .catch(function(response) {
                 if( response ){

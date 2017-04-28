@@ -26,6 +26,12 @@
                 </div>
             </div>
         </div>
+        <div style="text-align:center">
+            <spinner name="editReservationSpinner" img-src="./resources/default.gif">Updating event ...</spinner>
+        </div>
+        <div style="text-align:center">
+            <spinner name="deleteReservationSpinner" img-src="./resources/default.gif">Deleting event ...</spinner>
+        </div>
     </div>
     <div class="modal-footer">
         <button style="float: left" type="button" class="btn btn-danger" ng-show="currentEvent.userId == currentUser.id" ng-click="deleteReservation(currentEvent.id)">Delete</button>
