@@ -442,7 +442,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             } else {
                 $rootScope.currentUser = {
                     username: $cookies.get(COOKIE_KEYS.USERNAME),
-                    id: $cookies.get(COOKIE_KEYS.USERID)
+                    id: $cookies.get(COOKIE_KEYS.USERID),
+                    isAdmin: $cookies.get(COOKIE_KEYS.IS_ADMIN)
                 };
             }
             $rootScope.selectedDate = new Date();

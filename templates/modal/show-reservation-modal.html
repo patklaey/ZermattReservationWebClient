@@ -34,9 +34,9 @@
         </div>
     </div>
     <div class="modal-footer">
-        <button style="float: left" type="button" class="btn btn-danger" ng-show="currentEvent.userId == currentUser.id" ng-click="deleteReservation(currentEvent.id)">Delete</button>
+        <button style="float: left" type="button" class="btn btn-danger" ng-show="currentEvent.userId == currentUser.id || currentUser.isAdmin" ng-click="deleteReservation(currentEvent.id)">Delete</button>
         <button type="button" class="btn btn-warning" ng-click="cancelEditReservation()">Cancel</button>
-        <button type="submit" ng-show="currentEvent.userId == currentUser.id" class="btn btn-primary">Update</button>
+        <button type="submit" ng-show="currentEvent.userId == currentUser.id || currentUser.isAdmin" class="btn btn-primary">Update</button>
     </div>
 </form>
 
