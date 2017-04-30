@@ -1,30 +1,18 @@
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners'])
-    .constant("CONFIG", {
-        "API_ENDPOINT": "http://localhost:5000"
-    })
-    .constant("COOKIE_KEYS", {
-        "USERNAME":"username",
-        "AUTHENTICATED": "authenticated",
-        "IS_ADMIN": "isAdmin",
-        "USERID": "userId",
-        "EXPIRE_DATE": "expireDate"
-    })
-    .run(function($rootScope, $cookies, COOKIE_KEYS){
-        try {
-            var exp = $cookies.getObject(COOKIE_KEYS.EXPIRE_DATE);
-        } finally {
-            var now = moment();
-            if ( ! exp || now.isAfter(exp) ) {
-                $rootScope.$broadcast("logout-event");
-            } else {
-                $rootScope.currentUser = {
-                    username: $cookies.get(COOKIE_KEYS.USERNAME),
-                    id: $cookies.get(COOKIE_KEYS.USERID)
-                };
-            }
-            $rootScope.selectedDate = new Date();
-        }
-    });
+var configModule = angular.module('configModule', []);
+
+configModule.constant("CONFIG", {
+    "API_ENDPOINT": "http://localhost:5000"
+});
+
+configModule.constant("COOKIE_KEYS", {
+    "USERNAME":"username",
+    "AUTHENTICATED": "authenticated",
+    "IS_ADMIN": "isAdmin",
+    "USERID": "userId",
+    "EXPIRE_DATE": "expireDate"
+});
+
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners', 'configModule']);
 
 myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
         $httpProvider.defaults.useXDomain = true;
@@ -380,7 +368,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
             newUser.admin = $scope.user.admin;
         }
 
-        $http.put(CONFIG.API_ENDPOINT + '/users/' + userId,JSON.stringify(newUser))
+        $http.put(CONFIG.API_ENDPOINT + '/users/' + userId, JSON.stringify(newUser))
             .then(function() {
                 $scope.showInfoToast("User updated!");
             }, function(response) {
@@ -398,6 +386,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
         $http.delete(CONFIG.API_ENDPOINT + '/users/' + $scope.user.id)
             .success(function(response) {
                 $scope.showInfoToast("User successfully removed!");
+                location.reload();
             })
             .catch(function(response) {
                 if( response ){
@@ -442,6 +431,23 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
     $rootScope.$on('logout-event', function(){
         $scope.logout();
     });
+
+    $scope.initUser = function () {
+        try {
+            var exp = $cookies.getObject(COOKIE_KEYS.EXPIRE_DATE);
+        } finally {
+            var now = moment();
+            if ( ! exp || now.isAfter(exp) ) {
+                $scope.logout();
+            } else {
+                $rootScope.currentUser = {
+                    username: $cookies.get(COOKIE_KEYS.USERNAME),
+                    id: $cookies.get(COOKIE_KEYS.USERID)
+                };
+            }
+            $rootScope.selectedDate = new Date();
+        }
+    };
 
     $scope.logout= function() {
         $http.post(CONFIG.API_ENDPOINT + '/logout');
