@@ -6,27 +6,6 @@
     <div class="modal-body container col-md-12">
         <div class="row">
             <div class="col-md-12">
-                <div ng-class="{ 'has-error': reservationForm.title.$invalid && reservationForm.title.$touched}">
-                    <div class="input-group form-group">
-                        <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
-                        <input id="title" type="text" class="form-control" name="title" placeholder="Title" ng-model="event.title" required>
-                    </div>
-                    <div class="help-block" ng-messages="reservationForm.title.$error" ng-if="reservationForm.title.$touched">
-                        <p ng-message="required">Title is required.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
-                <div class="input-group form-group">
-                    <span class="input-group-addon"><i class="glyphicon glyphicon-pencil"></i></span>
-                    <input id="description" type="text" class="form-control" name="description" placeholder="Description (optional)" ng-model="event.description">
-                </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-12">
                 <div class='input-group date form-group'>
                     <label for="allDay">All Day:</label>
                     <input id="allDay" name="allDay" type="checkbox" ng-model="event.allDay"/>

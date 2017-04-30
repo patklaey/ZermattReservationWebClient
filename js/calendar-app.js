@@ -283,7 +283,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
             allDay = true;
         }
 
-        var event = { title: $scope.event.title, startTime: startDate, endTime: endDate, allDay: allDay, description: $scope.event.description};
+        var event = { title: $rootScope.currentUser.username, startTime: startDate, endTime: endDate, allDay: allDay};
         $scope.addEvent(event);
     };
 
