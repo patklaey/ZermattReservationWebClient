@@ -438,7 +438,10 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         } finally {
             var now = moment();
             if ( ! exp || now.isAfter(exp) ) {
-                $scope.logout();
+                if( $cookies.get(COOKIE_KEYS.AUTHENTICATED)){
+                    $scope.logout();
+                    $scope.showWarningToast("Your session expired! Please login again!")
+                }
             } else {
                 $rootScope.currentUser = {
                     username: $cookies.get(COOKIE_KEYS.USERNAME),
