@@ -269,10 +269,6 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
             endDate = $scope.selectedDate;
         }
 
-        if ($scope.event && $scope.event.allDay){
-            allDay = true;
-        }
-
         var event = { title: $rootScope.currentUser.username, startTime: startDate, endTime: endDate, allDay: allDay};
         $scope.addEvent(event);
     };
@@ -479,7 +475,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 		});
 	};
 
-	$scope.showReservation = function(){
+	$scope.showAddReservation = function(){
         $rootScope.reservationModal = $uibModal.open({
             templateUrl: "./templates/modal/new-reservation-modal.html",
             controller: "CalendarCtrl",
