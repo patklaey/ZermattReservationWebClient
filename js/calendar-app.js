@@ -1,7 +1,8 @@
 var configModule = angular.module('configModule', []);
 
 configModule.constant("CONFIG", {
-    "API_ENDPOINT": "http://localhost:5000"
+    "API_ENDPOINT": "http://localhost:5000",
+    "CSRF_HEADER_NAME": "X-CSRF-TOKEN"
 });
 
 configModule.constant("COOKIE_KEYS", {
@@ -9,7 +10,8 @@ configModule.constant("COOKIE_KEYS", {
     "AUTHENTICATED": "authenticated",
     "IS_ADMIN": "isAdmin",
     "USERID": "userId",
-    "EXPIRE_DATE": "expireDate"
+    "EXPIRE_DATE": "expireDate",
+    "CSRF_TOKEN": "csrfToken"
 });
 
 var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners', 'configModule']);
@@ -119,7 +121,7 @@ myAppModule.directive("datepicker", function ($rootScope) {
     }
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, $http, $sce, ngToast, $timeout, CONFIG, COOKIE_KEYS, spinnerService) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, $http, $sce, ngToast, $timeout, $cookies, CONFIG, COOKIE_KEYS, spinnerService) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -193,7 +195,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         }
 
         spinnerService.show('editReservationSpinner');
-        $http.put(CONFIG.API_ENDPOINT + '/reservations/' + $scope.currentEvent.id,JSON.stringify(eventToUpdate))
+        $http.put(CONFIG.API_ENDPOINT + '/reservations/' + $scope.currentEvent.id,JSON.stringify(eventToUpdate), {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function() {
                     $scope.showInfoToast("Event updated!");
                     $rootScope.$broadcast('event-source-changed');
@@ -221,7 +223,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 
     $scope.deleteReservation = function (reservationId) {
         spinnerService.show('deleteReservationSpinner');
-        $http.delete(CONFIG.API_ENDPOINT + '/reservations/' + reservationId)
+        $http.delete(CONFIG.API_ENDPOINT + '/reservations/' + reservationId, {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function(response) {
                 $scope.showInfoToast("Event successfully removed!");
                 $scope.showReservationModal.close();
@@ -277,7 +279,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 
     $scope.addEvent = function(event) {
         spinnerService.show('addReservationSpinner');
-        $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event))
+        $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event), {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function(response) {
                 event.id = response.id;
                 $scope.showInfoToast("Event added!");
@@ -346,7 +348,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 });
 
 
-myAppModule.controller('userController', function($scope, $rootScope, $http, $sce, ngToast, CONFIG) {
+myAppModule.controller('userController', function($scope, $rootScope, $http, $sce, ngToast, CONFIG, COOKIE_KEYS, $cookies) {
 
     $scope.updateUser = function() {
         var userId = $scope.user.id;
@@ -368,7 +370,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
             newUser.admin = $scope.user.admin;
         }
 
-        $http.put(CONFIG.API_ENDPOINT + '/users/' + userId, JSON.stringify(newUser))
+        $http.put(CONFIG.API_ENDPOINT + '/users/' + userId, JSON.stringify(newUser), {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .then(function() {
                 $scope.showInfoToast("User updated!");
             }, function(response) {
@@ -383,7 +385,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
     };
 
     $scope.deleteUser = function(){
-        $http.delete(CONFIG.API_ENDPOINT + '/users/' + $scope.user.id)
+        $http.delete(CONFIG.API_ENDPOINT + '/users/' + $scope.user.id, {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function(response) {
                 $scope.showInfoToast("User successfully removed!");
                 location.reload();
@@ -454,7 +456,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
     };
 
     $scope.logout= function() {
-        $http.post(CONFIG.API_ENDPOINT + '/logout');
+        $http.post(CONFIG.API_ENDPOINT + '/logout', {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}});
         $cookies.remove(COOKIE_KEYS.AUTHENTICATED);
         $cookies.remove(COOKIE_KEYS.USERNAME);
         $cookies.remove(COOKIE_KEYS.USERID);
@@ -599,7 +601,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $cookies.put(COOKIE_KEYS.USERID, payload.user_claims.userId);
         $cookies.put(COOKIE_KEYS.AUTHENTICATED,true);
         $cookies.put(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
-        $cookies.putObject(COOKIE_KEYS.EXPIRE_DATE, moment.unix(payload.exp))
+        $cookies.putObject(COOKIE_KEYS.EXPIRE_DATE, moment.unix(payload.exp));
+        $cookies.put(COOKIE_KEYS.CSRF_TOKEN, payload.csrf);
     };
 
     $scope.showErrorToast = function(message){
