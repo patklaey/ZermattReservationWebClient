@@ -141,6 +141,14 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         );
     };
 
+    $scope.doubleClicked = function(){
+        $rootScope.reservationModal = $uibModal.open({
+            templateUrl: "./templates/modal/new-reservation-modal.html",
+            controller: "CalendarCtrl",
+            size: "lg"
+        });
+    };
+
     $scope.isAuthenticated = function() {
         return $cookies.get(COOKIE_KEYS.AUTHENTICATED);
     };
