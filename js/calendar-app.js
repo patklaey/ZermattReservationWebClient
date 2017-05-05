@@ -452,7 +452,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 $rootScope.currentUser = {
                     username: $cookies.get(COOKIE_KEYS.USERNAME),
                     id: $cookies.get(COOKIE_KEYS.USERID),
-                    isAdmin: $cookies.get(COOKIE_KEYS.IS_ADMIN)
+                    isAdmin: $cookies.getObject(COOKIE_KEYS.IS_ADMIN)
                 };
             }
             $rootScope.selectedDate = new Date();
@@ -599,12 +599,13 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         var payload = JSON.parse(window.atob(token_parts[1]));
         $rootScope.currentUser = {
             username: payload.user_claims.username,
-            id: payload.user_claims.userId
+            id: payload.user_claims.userId,
+            isAdmin: payload.user_claims.admin
         };
         $cookies.put(COOKIE_KEYS.USERNAME, payload.user_claims.username);
         $cookies.put(COOKIE_KEYS.USERID, payload.user_claims.userId);
         $cookies.put(COOKIE_KEYS.AUTHENTICATED,true);
-        $cookies.put(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
+        $cookies.putObject(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
         $cookies.putObject(COOKIE_KEYS.EXPIRE_DATE, moment.unix(payload.exp));
         $cookies.put(COOKIE_KEYS.CSRF_TOKEN, payload.csrf);
     };
