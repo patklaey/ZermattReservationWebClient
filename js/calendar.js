@@ -1051,29 +1051,6 @@ angular.module("template/rcalendar/calendar.html", []).run(["$templateCache", fu
 angular.module("template/rcalendar/day.html", []).run(["$templateCache", function($templateCache) {
   $templateCache.put("template/rcalendar/day.html",
     "<div>\n" +
-    "    <div class=\"dayview-allday-table\">\n" +
-    "        <div class=\"dayview-allday-label\">\n" +
-    "            all day\n" +
-    "        </div>\n" +
-    "        <div class=\"dayview-allday-content-wrapper\">\n" +
-    "            <table class=\"table table-bordered dayview-allday-content-table\">\n" +
-    "                <tbody>\n" +
-    "                <tr>\n" +
-    "                    <td class=\"calendar-cell\" ng-class=\"{'calendar-event-wrap':allDayEvents}\"\n" +
-    "                        ng-style=\"{height: 25*allDayEvents.length+'px'}\">\n" +
-    "                        <div ng-repeat=\"displayEvent in allDayEvents\" class=\"calendar-event\"\n" +
-    "                             ng-click=\"eventSelected({event:displayEvent.event})\"\n" +
-    "                             ng-style=\"{top: 25*$index+'px',width: '100%',height:'25px'}\">\n" +
-    "                            <div class=\"calendar-event-inner\">{{displayEvent.event.title}}</div>\n" +
-    "                        </div>\n" +
-    "                    </td>\n" +
-    "                    <td ng-if=\"allDayEventGutterWidth>0\" class=\"gutter-column\"\n" +
-    "                        ng-style=\"{width:allDayEventGutterWidth+'px'}\"></td>\n" +
-    "                </tr>\n" +
-    "                </tbody>\n" +
-    "            </table>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
     "    <div class=\"scrollable\">\n" +
     "        <table class=\"table table-bordered table-fixed\">\n" +
     "            <tbody>\n" +
@@ -1125,16 +1102,17 @@ angular.module("template/rcalendar/month.html", []).run(["$templateCache", funct
     "    </table>\n" +
     "    <div ng-if=\"showEventDetail\" class=\"event-detail-container\">\n" +
     "        <div class=\"scrollable\" style=\"height: 200px\">\n" +
-    "            <table class=\"table table-bordered table-striped table-fixed\">\n" +
-    "                <tr ng-repeat=\"event in selectedDate.events\" ng-if=\"selectedDate.events\">\n" +
-    "                    <td ng-if=\"!event.allDay\" class=\"monthview-eventdetail-timecolumn\">{{event.startTime|date: 'dd.MM HH:mm'}}\n" +
+    "            <table class=\"table table-bordered table-responsive table-striped\">\n" +
+    "                <tr><th class=\"monthview-eventdetail-timecolumn\">Reservationen:</th><th></th><th></th></tr>\n" +
+    "                <tr ng-repeat=\"event in selectedDate.events\" ng-if=\"selectedDate.events\" ng-dblclick=\"eventSelected({event:event})\">\n" +
+    "                    <td ng-if=\"!event.allDay\" class=\"left-align monthview-eventdetail-timecolumn\">{{event.startTime|date: 'dd.MM.yyyy HH:mm'}}\n" +
     "                        -\n" +
-    "                        {{event.endTime|date: 'dd.MM HH:mm'}}\n" +
+    "                        {{event.endTime|date: 'dd.MM.yyyy HH:mm'}}\n" +
     "                    </td>\n" +
-    "                    <td ng-if=\"event.allDay\" class=\"monthview-eventdetail-timecolumn\">All day</td>\n" +
-    "                    <td class=\"event-detail\" ng-click=\"eventSelected({event:event})\">{{event.title}}</td>\n" +
+    "                    <td class=\"event-detail left-align\">Reservation für {{event.title}}</td>\n" +
+    "                    <td class=\"right-align\"><button type=\"button\" ng-show=\"currentEvent.userId == currentUser.id || currentUser.isAdmin\" class=\"btn btn-xs btn-primary\">Bearbeiten</button></td>\n" +
     "                </tr>\n" +
-    "                <tr ng-if=\"!selectedDate.events\"><td class=\"no-event-label\">No Events</td></tr>\n" +
+    "                <tr ng-if=\"!selectedDate.events\"><td class=\"no-event-label left-align\">Aktuell keine Reservationenn</td><td></td><td></td></tr>\n" +
     "            </table>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -1155,31 +1133,6 @@ angular.module("template/rcalendar/week.html", []).run(["$templateCache", functi
     "        </tr>\n" +
     "        </thead>\n" +
     "    </table>\n" +
-    "    <div class=\"weekview-allday-table\">\n" +
-    "        <div class=\"weekview-allday-label\">\n" +
-    "            all day\n" +
-    "        </div>\n" +
-    "        <div class=\"weekview-allday-content-wrapper\">\n" +
-    "            <table class=\"table table-bordered table-fixed weekview-allday-content-table\">\n" +
-    "                <tbody>\n" +
-    "                <tr>\n" +
-    "                    <td ng-repeat=\"day in dates track by day.date\" class=\"calendar-cell\">\n" +
-    "                        <div ng-class=\"{'calendar-event-wrap': day.events}\" ng-if=\"day.events\"\n" +
-    "                             ng-style=\"{height: 25*day.events.length+'px'}\">\n" +
-    "                            <div ng-repeat=\"displayEvent in day.events\" class=\"calendar-event\"\n" +
-    "                                 ng-click=\"eventSelected({event:displayEvent.event})\"\n" +
-    "                                 ng-style=\"{top: 25*displayEvent.position+'px', width: 100*(displayEvent.endIndex-displayEvent.startIndex)+'%', height: '25px'}\">\n" +
-    "                                <div class=\"calendar-event-inner\">{{displayEvent.event.title}}</div>\n" +
-    "                            </div>\n" +
-    "                        </div>\n" +
-    "                    </td>\n" +
-    "                    <td ng-if=\"allDayEventGutterWidth>0\" class=\"gutter-column\"\n" +
-    "                        ng-style=\"{width: allDayEventGutterWidth+'px'}\"></td>\n" +
-    "                </tr>\n" +
-    "                </tbody>\n" +
-    "            </table>\n" +
-    "        </div>\n" +
-    "    </div>\n" +
     "    <div class=\"scrollable\">\n" +
     "        <table class=\"table table-bordered table-fixed\">\n" +
     "            <tbody>\n" +

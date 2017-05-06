@@ -42,10 +42,21 @@ body {
     table-layout: fixed;
 }
 
+.table-no-border {
+    border: 0;
+}
+
+.right-align {
+    text-align: right;
+}
+
+.left-align {
+    text-align: left;
+}
+
 .no-event-label {
     font-weight: bold;
     color: darkgrey;
-    text-align: center;
 }
 
 .event-detail-container {
@@ -113,8 +124,7 @@ body {
 }
 
 .monthview-eventdetail-timecolumn {
-    width: 185px;
-    overflow: hidden;
+    text-align: left;
 }
 
 .monthview-dateCell {
