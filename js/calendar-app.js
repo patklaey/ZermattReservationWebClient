@@ -444,14 +444,14 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         } finally {
             var now = moment();
             if ( ! exp || now.isAfter(exp) ) {
-                if( $cookies.get(COOKIE_KEYS.AUTHENTICATED)){
+                if( $cookies.getObject(COOKIE_KEYS.AUTHENTICATED)){
                     $scope.logout();
                     $scope.showWarningToast("Your session expired! Please login again!")
                 }
             } else {
                 $rootScope.currentUser = {
-                    username: $cookies.get(COOKIE_KEYS.USERNAME),
-                    id: $cookies.get(COOKIE_KEYS.USERID),
+                    username: $cookies.getObject(COOKIE_KEYS.USERNAME),
+                    id: $cookies.getObject(COOKIE_KEYS.USERID),
                     isAdmin: $cookies.getObject(COOKIE_KEYS.IS_ADMIN)
                 };
             }
@@ -602,12 +602,12 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             id: payload.user_claims.userId,
             isAdmin: payload.user_claims.admin
         };
-        $cookies.put(COOKIE_KEYS.USERNAME, payload.user_claims.username);
-        $cookies.put(COOKIE_KEYS.USERID, payload.user_claims.userId);
-        $cookies.put(COOKIE_KEYS.AUTHENTICATED,true);
+        $cookies.putObject(COOKIE_KEYS.USERNAME, payload.user_claims.username);
+        $cookies.putObject(COOKIE_KEYS.USERID, payload.user_claims.userId);
+        $cookies.putObject(COOKIE_KEYS.AUTHENTICATED,true);
         $cookies.putObject(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
         $cookies.putObject(COOKIE_KEYS.EXPIRE_DATE, moment.unix(payload.exp));
-        $cookies.put(COOKIE_KEYS.CSRF_TOKEN, payload.csrf);
+        $cookies.putObject(COOKIE_KEYS.CSRF_TOKEN, payload.csrf);
     };
 
     $scope.showErrorToast = function(message){

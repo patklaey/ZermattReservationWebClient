@@ -15,7 +15,7 @@ angular.module('ui.rCalendar', ['ui.rCalendar.tpls'])
         eventSource: null,
         queryMode: 'local'
     })
-    .controller('ui.rCalendar.CalendarController', ['$scope', '$attrs', '$parse', '$interpolate', '$log', 'dateFilter', 'calendarConfig', function ($scope, $attrs, $parse, $interpolate, $log, dateFilter, calendarConfig) {
+    .controller('ui.rCalendar.CalendarController', ['$scope', '$rootScope', '$attrs', '$parse', '$interpolate', '$log', 'dateFilter', 'calendarConfig', function ($scope, $rootScope, $attrs, $parse, $interpolate, $log, dateFilter, calendarConfig) {
         'use strict';
         var self = this,
             ngModelCtrl = {$setViewValue: angular.noop}; // nullModelCtrl;
@@ -25,6 +25,15 @@ angular.module('ui.rCalendar', ['ui.rCalendar.tpls'])
             'showWeeks', 'showEventDetail', 'startingDay', 'eventSource', 'queryMode'], function (key, index) {
             self[key] = angular.isDefined($attrs[key]) ? (index < 7 ? $interpolate($attrs[key])($scope.$parent) : $scope.$parent.$eval($attrs[key])) : calendarConfig[key];
         });
+
+        $scope.showEditButton = function (event) {
+            if($rootScope.currentUser) {
+                if ($rootScope.currentUser.isAdmin || $rootScope.currentUser.id === event.userId) {
+                    return true;
+                }
+            }
+            return false;
+        };
 
         $scope.$parent.$watch($attrs.eventSource, function (value) {
             self.onEventSourceChanged(value);
@@ -1102,17 +1111,15 @@ angular.module("template/rcalendar/month.html", []).run(["$templateCache", funct
     "    </table>\n" +
     "    <div ng-if=\"showEventDetail\" class=\"event-detail-container\">\n" +
     "        <div class=\"scrollable\" style=\"height: 200px\">\n" +
-    "            <table class=\"table table-bordered table-responsive table-striped\">\n" +
-    "                <tr><th class=\"monthview-eventdetail-timecolumn\">Reservationen:</th><th></th><th></th></tr>\n" +
+    "            <table class=\"table table-no-border table-responsive table-striped\">\n" +
+    "                <tr><th class=\"monthview-eventdetail-timecolumn\">Reservationen:</th><th></th></tr>\n" +
     "                <tr ng-repeat=\"event in selectedDate.events\" ng-if=\"selectedDate.events\" ng-dblclick=\"eventSelected({event:event})\">\n" +
-    "                    <td ng-if=\"!event.allDay\" class=\"left-align monthview-eventdetail-timecolumn\">{{event.startTime|date: 'dd.MM.yyyy HH:mm'}}\n" +
-    "                        -\n" +
-    "                        {{event.endTime|date: 'dd.MM.yyyy HH:mm'}}\n" +
-    "                    </td>\n" +
-    "                    <td class=\"event-detail left-align\">Reservation für {{event.title}}</td>\n" +
-    "                    <td class=\"right-align\"><button type=\"button\" ng-show=\"currentEvent.userId == currentUser.id || currentUser.isAdmin\" class=\"btn btn-xs btn-primary\">Bearbeiten</button></td>\n" +
+    "                    <td ng-if=\"!event.allDay\" class=\"monthview-eventdetail-timecolumn left-align\">" +
+    "                       {{event.startTime|date: 'dd.MM.yyyy HH:mm'}} - {{event.endTime|date: 'dd.MM.yyyy HH:mm'}} : " +
+    "                       Reservation für {{event.title}}</td>\n" +
+    "                    <td class=\"right-align\"><button type=\"button\" ng-show=\"showEditButton(event)\" class=\"btn btn-xs btn-primary\">Bearbeiten</button></td>\n" +
     "                </tr>\n" +
-    "                <tr ng-if=\"!selectedDate.events\"><td class=\"no-event-label left-align\">Aktuell keine Reservationenn</td><td></td><td></td></tr>\n" +
+    "                <tr ng-if=\"!selectedDate.events\"><td class=\"no-event-label left-align\">Aktuell keine Reservationen</td><td></td></tr>\n" +
     "            </table>\n" +
     "        </div>\n" +
     "    </div>\n" +
