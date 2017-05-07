@@ -572,19 +572,10 @@ angular.module('ui.rCalendar', ['ui.rCalendar.tpls'])
 
                 function updateScrollGutter() {
                     var children = element.children();
-                    //var allDayEventBody = children[1].children[1];
-                    //var allDayEventGutterWidth = allDayEventBody.offsetWidth - allDayEventBody.clientWidth;
                     var normalEventBody = children[1];
                     var normalEventGutterWidth = normalEventBody.offsetWidth - normalEventBody.clientWidth;
-                    //var gutterWidth = allDayEventGutterWidth || normalEventGutterWidth || 0;
                     var gutterWidth = normalEventGutterWidth || 0;
                     if (gutterWidth > 0) {
-                        scope.gutterWidth = gutterWidth;
-                        // if (allDayEventGutterWidth <= 0) {
-                        //     scope.allDayEventGutterWidth = gutterWidth;
-                        // } else {
-                        //     scope.allDayEventGutterWidth = 0;
-                        // }
                         if (normalEventGutterWidth <= 0) {
                             scope.normalGutterWidth = gutterWidth;
                         } else {
@@ -870,18 +861,10 @@ angular.module('ui.rCalendar', ['ui.rCalendar.tpls'])
 
                 function updateScrollGutter() {
                     var children = element.children();
-                    //var allDayEventBody = children[0].children[1];
-                    //var allDayEventGutterWidth = allDayEventBody.offsetWidth - allDayEventBody.clientWidth;
                     var normalEventBody = children[0];
                     var normalEventGutterWidth = normalEventBody.offsetWidth - normalEventBody.clientWidth;
-                    //var gutterWidth = allDayEventGutterWidth || normalEventGutterWidth || 0;
                     var gutterWidth = normalEventGutterWidth || 0;
                     if (gutterWidth > 0) {
-                        // if (allDayEventGutterWidth <= 0) {
-                        //     scope.allDayEventGutterWidth = gutterWidth;
-                        // } else {
-                        //     scope.allDayEventGutterWidth = 0;
-                        // }
                         if (normalEventGutterWidth <= 0) {
                             scope.normalGutterWidth = gutterWidth;
                         } else {
