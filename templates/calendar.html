@@ -3,26 +3,26 @@
     <body>
         <div class="container">
             <div class="row">
-                <div ng-controller="CalendarCtrl" class="calendar" ng-dblclick="doubleClicked()" ng-init="initEvents()">
+                <div ng-controller="CalendarCtrl" class="calendar" ng-init="initEvents()">
                     <div class="btn-toolbar">
                         <div class="btn-group">
                             <button type="button" class="btn btn-default" ng-class="{active:mode==='month'}"
                                 ng-click="changeMode('month')">
-                                Month
+                                Monat
                             </button>
                             <button type="button" class="btn btn-default" ng-class="{active:mode==='week'}"
                                 ng-click="changeMode('week')">
-                                Week
+                                Woche
                             </button>
                             <button type="button" class="btn btn-default" ng-class="{active:mode==='day'}"
                                 ng-click="changeMode('day')">
-                                Day
+                                Tag
                             </button>
                         </div>
                         <div class="btn-group">
                             <button type="button" class="btn btn-default" ng-disabled="isToday()"
                                 ng-click="today()">
-                                Today
+                                Heute
                             </button>
                         </div>
                     </div>

@@ -349,6 +349,10 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         $scope.showWarningToast("<strong>Please review your inputs</strong><br/>There are some errors in the form.");
     });
 
+    $rootScope.$on('double-clicked-calendar', function () {
+        $scope.doubleClicked();
+    });
+
 });
 
 
