@@ -341,15 +341,15 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         });
     };
 
-    $rootScope.$on('event-source-changed', function(){
+    $scope.$on('event-source-changed', function(){
         $scope.$broadcast('eventSourceChanged',$rootScope.eventSource);
     });
 
-    $rootScope.$on('invalid-form-event', function(){
+    $scope.$on('invalid-form-event', function(){
         $scope.showWarningToast("<strong>Please review your inputs</strong><br/>There are some errors in the form.");
     });
 
-    $rootScope.$on('double-clicked-calendar', function () {
+    $scope.$on('double-clicked-calendar', function () {
         $scope.doubleClicked();
     });
 
