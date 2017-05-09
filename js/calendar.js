@@ -39,6 +39,14 @@ angular.module('ui.rCalendar', ['ui.rCalendar.tpls'])
             $rootScope.$broadcast("double-clicked-calendar");
         };
 
+        $scope.addReservation = function () {
+            $rootScope.$broadcast('add-reservation-clicked');
+        };
+
+        $scope.isLoggedIn = function() {
+            return $rootScope.currentUser && $rootScope.currentUser.id;
+        };
+
         $scope.$parent.$watch($attrs.eventSource, function (value) {
             self.onEventSourceChanged(value);
         });
@@ -1050,7 +1058,7 @@ angular.module("template/rcalendar/day.html", []).run(["$templateCache", functio
   $templateCache.put("template/rcalendar/day.html",
     "<div>\n" +
     "    <div class=\"scrollable\">\n" +
-    "        <table class=\"table table-bordered table-fixed\">\n" +
+    "        <table ng-dblclick=\"doubleClicked()\" class=\"table table-bordered table-fixed\">\n" +
     "            <tbody>\n" +
     "            <tr ng-repeat=\"tm in rows track by $index\">\n" +
     "                <td class=\"calendar-hour-column text-center\">\n" +
@@ -1102,13 +1110,20 @@ angular.module("template/rcalendar/month.html", []).run(["$templateCache", funct
     "        <div class=\"scrollable\" style=\"height: 200px\">\n" +
     "            <table class=\"table table-no-border table-responsive table-striped\">\n" +
     "                <tr><th class=\"monthview-eventdetail-timecolumn\">Reservationen:</th><th></th></tr>\n" +
-    "                <tr ng-repeat=\"event in selectedDate.events\" ng-if=\"selectedDate.events\" ng-dblclick=\"eventSelected({event:event})\">\n" +
+    "                <tr ng-repeat=\"event in selectedDate.events\" ng-if=\"selectedDate.events\">\n" +
     "                    <td ng-if=\"!event.allDay\" class=\"monthview-eventdetail-timecolumn left-align\">" +
-    "                       {{event.startTime|date: 'dd.MM.yyyy HH:mm'}} - {{event.endTime|date: 'dd.MM.yyyy HH:mm'}} : " +
+    "                       {{event.startTime|date: 'dd.MM.yyyy HH:mm'}} - {{event.endTime|date: 'dd.MM.yyyy HH:mm'}}: " +
     "                       Reservation für {{event.title}}</td>\n" +
-    "                    <td class=\"right-align\"><button type=\"button\" ng-show=\"showEditButton(event)\" class=\"btn btn-xs btn-primary\">Bearbeiten</button></td>\n" +
+    "                    <td class=\"right-align\"><button type=\"button\" ng-show=\"showEditButton(event)\" ng-click=\"eventSelected({event:event})\"\" class=\"btn btn-xs btn-primary\">Bearbeiten</button></td>\n" +
     "                </tr>\n" +
-    "                <tr ng-if=\"!selectedDate.events\"><td class=\"no-event-label left-align\">Aktuell keine Reservationen</td><td></td></tr>\n" +
+    "                <tr ng-if=\"selectedDate.events\">" +
+    "                   <td class=\"no-event-label left-align\"></td>" +
+    "                   <td class='right-align'><button type=\"button\" ng-show=\"isLoggedIn()\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">Hinzufügen</button></td>" +
+    "                </tr>\n" +
+    "                <tr ng-if=\"!selectedDate.events && isLoggedIn()\">" +
+    "                   <td class=\"no-event-label left-align\">Aktuell keine Reservationen</td>" +
+    "                   <td class='right-align'><button type=\"button\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">Hinzufügen</button></td>" +
+    "               </tr>\n" +
     "            </table>\n" +
     "        </div>\n" +
     "    </div>\n" +
@@ -1130,7 +1145,7 @@ angular.module("template/rcalendar/week.html", []).run(["$templateCache", functi
     "        </thead>\n" +
     "    </table>\n" +
     "    <div class=\"scrollable\">\n" +
-    "        <table class=\"table table-bordered table-fixed\">\n" +
+    "        <table ng-dblclick=\"doubleClicked()\" class=\"table table-bordered table-fixed\">\n" +
     "            <tbody>\n" +
     "            <tr ng-repeat=\"row in rows track by $index\">\n" +
     "                <td class=\"calendar-hour-column text-center\">\n" +

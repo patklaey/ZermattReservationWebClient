@@ -141,7 +141,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         );
     };
 
-    $scope.doubleClicked = function(){
+    $scope.showAddReservation = function(){
         $rootScope.reservationModal = $uibModal.open({
             templateUrl: "./templates/modal/new-reservation-modal.html",
             controller: "CalendarCtrl",
@@ -350,7 +350,11 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
     });
 
     $scope.$on('double-clicked-calendar', function () {
-        $scope.doubleClicked();
+        $scope.showAddReservation();
+    });
+
+    $scope.$on('add-reservation-clicked', function () {
+        $scope.showAddReservation();
     });
 
 });
