@@ -286,6 +286,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         $http.post(CONFIG.API_ENDPOINT + '/reservations',JSON.stringify(event), {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function(response) {
                 event.id = response.id;
+                event.userId = response.userId;
                 $scope.showInfoToast("Event added!");
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
