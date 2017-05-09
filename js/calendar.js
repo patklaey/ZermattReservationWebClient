@@ -1120,9 +1120,9 @@ angular.module("template/rcalendar/month.html", []).run(["$templateCache", funct
     "                   <td class=\"no-event-label left-align\"></td>" +
     "                   <td class='right-align'><button type=\"button\" ng-show=\"isLoggedIn()\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">Hinzufügen</button></td>" +
     "                </tr>\n" +
-    "                <tr ng-if=\"!selectedDate.events && isLoggedIn()\">" +
+    "                <tr ng-if=\"!selectedDate.events\">" +
     "                   <td class=\"no-event-label left-align\">Aktuell keine Reservationen</td>" +
-    "                   <td class='right-align'><button type=\"button\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">Hinzufügen</button></td>" +
+    "                   <td class='right-align'><button type=\"button\" ng-show=\"isLoggedIn()\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">Hinzufügen</button></td>" +
     "               </tr>\n" +
     "            </table>\n" +
     "        </div>\n" +
