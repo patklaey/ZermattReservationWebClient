@@ -142,6 +142,9 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
     };
 
     $scope.showAddReservation = function(){
+        if( !$scope.isAuthenticated() ) {
+            return;
+        }
         $rootScope.reservationModal = $uibModal.open({
             templateUrl: "./templates/modal/new-reservation-modal.html",
             controller: "CalendarCtrl",
