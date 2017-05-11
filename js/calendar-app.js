@@ -129,6 +129,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 
     $scope.today = function () {
         $scope.currentDate = new Date();
+        $rootScope.selectedDate = $scope.currentDate;
     };
 
     $scope.initEvents = function () {
