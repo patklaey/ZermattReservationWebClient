@@ -14,9 +14,9 @@ configModule.constant("COOKIE_KEYS", {
     "CSRF_TOKEN": "csrfToken"
 });
 
-var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners', 'configModule']);
+var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners', 'configModule', 'pascalprecht.translate']);
 
-myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $routeProvider) {
+myAppModule.config(['$httpProvider', '$routeProvider', '$translateProvider', function($httpProvider, $routeProvider, $translateProvider) {
         $httpProvider.defaults.useXDomain = true;
         $httpProvider.defaults.withCredentials = true;
         delete $httpProvider.defaults.headers.common['X-Requested-With'];
@@ -28,6 +28,13 @@ myAppModule.config(['$httpProvider', '$routeProvider', function($httpProvider, $
             .otherwise({
                 templateUrl: "templates/calendar.html"
             });
+
+        $translateProvider
+        .useStaticFilesLoader({
+            prefix: './translations/',
+            suffix: '.json'
+        });
+        $translateProvider.preferredLanguage('de');
     }
 ]);
 
