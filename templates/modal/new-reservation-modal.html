@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4>Add a reservation</h4>
+    <h4>{{ 'addReservation' | translate}}</h4>
 </div>
 
 <form name="reservationForm" ng-submit="addReservation()" novalidate>
@@ -7,25 +7,25 @@
         <div class="row">
             <div class="col-md-6">
                 <div class='input-group date form-group'>
-                    <label for="startDate">From:</label>
+                    <label for="startDate">{{ 'from' | translate}}:</label>
                     <div id="startDate" ng-model="event.startDate" datepicker="startDate"></div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class='input-group date form-group'>
-                    <label for="endDate">To:</label>
+                    <label for="endDate">{{ 'to' | translate}}:</label>
                     <div id="endDate" ng-model="event.endDate" datepicker="endDate"></div>
                 </div>
             </div>
         </div>
         <div style="text-align:center">
-            <spinner name="addReservationSpinner" img-src="./resources/default.gif">Adding event ...</spinner>
+            <spinner name="addReservationSpinner" img-src="./resources/default.gif">{{ 'addEventSpinnerText' | translate}}</spinner>
         </div>
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" ng-click="cancelReservation()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Add</button>
+        <button type="button" class="btn btn-warning" ng-click="cancelReservation()">{{ 'cancel' | translate}}</button>
+        <button type="submit" class="btn btn-primary">{{ 'add' | translate}}</button>
     </div>
 </form>
 

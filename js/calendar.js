@@ -1109,20 +1109,20 @@ angular.module("template/rcalendar/month.html", []).run(["$templateCache", funct
     "    <div ng-if=\"showEventDetail\" class=\"event-detail-container\">\n" +
     "        <div class=\"scrollable\" style=\"height: 200px\">\n" +
     "            <table class=\"table table-no-border table-responsive table-striped\">\n" +
-    "                <tr><th class=\"monthview-eventdetail-timecolumn\">Reservationen:</th><th></th></tr>\n" +
+    "                <tr><th class=\"monthview-eventdetail-timecolumn\">{{ 'reservations' | translate}}:</th><th></th></tr>\n" +
     "                <tr ng-repeat=\"event in selectedDate.events\" ng-if=\"selectedDate.events\">\n" +
     "                    <td ng-if=\"!event.allDay\" class=\"monthview-eventdetail-timecolumn left-align\">" +
     "                       {{event.startTime|date: 'dd.MM.yyyy HH:mm'}} - {{event.endTime|date: 'dd.MM.yyyy HH:mm'}}: " +
-    "                       Reservation für {{event.title}}</td>\n" +
-    "                    <td class=\"right-align\"><button type=\"button\" ng-show=\"showEditButton(event)\" ng-click=\"eventSelected({event:event})\"\" class=\"btn btn-xs btn-primary\">Bearbeiten</button></td>\n" +
+    "                       {{ 'reservationFor' | translate}} {{event.title}}</td>\n" +
+    "                    <td class=\"right-align\"><button type=\"button\" ng-show=\"showEditButton(event)\" ng-click=\"eventSelected({event:event})\"\" class=\"btn btn-xs btn-primary\">{{ 'update' | translate}}</button></td>\n" +
     "                </tr>\n" +
     "                <tr ng-if=\"selectedDate.events\">" +
     "                   <td class=\"no-event-label left-align\"></td>" +
-    "                   <td class='right-align'><button type=\"button\" ng-show=\"isLoggedIn()\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">Hinzufügen</button></td>" +
+    "                   <td class='right-align'><button type=\"button\" ng-show=\"isLoggedIn()\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">{{ 'add' | translate}}</button></td>" +
     "                </tr>\n" +
     "                <tr ng-if=\"!selectedDate.events\">" +
     "                   <td class=\"no-event-label left-align\">Aktuell keine Reservationen</td>" +
-    "                   <td class='right-align'><button type=\"button\" ng-show=\"isLoggedIn()\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">Hinzufügen</button></td>" +
+    "                   <td class='right-align'><button type=\"button\" ng-show=\"isLoggedIn()\" ng-click=\"addReservation()\"\" class=\"btn btn-xs btn-success\">{{ 'add' | translate}}</button></td>" +
     "               </tr>\n" +
     "            </table>\n" +
     "        </div>\n" +

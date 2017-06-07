@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4>Reservation for: {{currentEvent.title}}</h4>
+    <h4>{{ 'reservationFor' | translate}}: {{currentEvent.title}}</h4>
 </div>
 
 <form name="reservationForm" ng-submit="updateReservation()" novalidate>
@@ -7,28 +7,28 @@
         <div class="row">
             <div class="col-md-6">
                 <div class='input-group date form-group'>
-                    <label for="startDate">From:</label>
+                    <label for="startDate">{{ 'from' | translate}}:</label>
                     <div id="startDate" ng-model="event.startDate" predefined-date="{{currentEvent.startTime}}" datepicker="startDate"></div>
                 </div>
             </div>
             <div class="col-md-6">
                 <div class='input-group date form-group'>
-                    <label for="startDate">To:</label>
-                    <div id="endDate" onload="testOnoad()" ng-model="event.endDate" predefined-date="{{currentEvent.endTime}}" datepicker="endDate"></div>
+                    <label for="startDate">{{ 'to' | translate}}:</label>
+                    <div id="endDate" ng-model="event.endDate" predefined-date="{{currentEvent.endTime}}" datepicker="endDate"></div>
                 </div>
             </div>
         </div>
         <div style="text-align:center">
-            <spinner name="editReservationSpinner" img-src="./resources/default.gif">Updating event ...</spinner>
+            <spinner name="editReservationSpinner" img-src="./resources/default.gif">{{ 'editReservationSpinnerText' | translate}}</spinner>
         </div>
         <div style="text-align:center">
-            <spinner name="deleteReservationSpinner" img-src="./resources/default.gif">Deleting event ...</spinner>
+            <spinner name="deleteReservationSpinner" img-src="./resources/default.gif">{{ 'deleteReservationSpinnerText' | translate}}</spinner>
         </div>
     </div>
     <div class="modal-footer">
-        <button style="float: left" type="button" class="btn btn-danger" ng-show="currentEvent.userId == currentUser.id || currentUser.isAdmin" ng-click="deleteReservation(currentEvent.id)">Delete</button>
-        <button type="button" class="btn btn-warning" ng-click="cancelEditReservation()">Cancel</button>
-        <button type="submit" ng-show="currentEvent.userId == currentUser.id || currentUser.isAdmin" class="btn btn-primary">Update</button>
+        <button style="float: left" type="button" class="btn btn-danger" ng-show="currentEvent.userId == currentUser.id || currentUser.isAdmin" ng-click="deleteReservation(currentEvent.id)">{{ 'delete' | translate}}</button>
+        <button type="button" class="btn btn-warning" ng-click="cancelEditReservation()">{{ 'cancel' | translate}}</button>
+        <button type="submit" ng-show="currentEvent.userId == currentUser.id || currentUser.isAdmin" class="btn btn-primary">{{ 'update' | translate}}</button>
     </div>
 </form>
 
