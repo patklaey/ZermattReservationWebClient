@@ -47,6 +47,25 @@
   "reservations": "Reservationen",
   "cannotLoadEvents": "Reservationen können nicht geladen werden. Bitte versuche es später noch einmal",
   "cannotUpdateEvent": "Reservation konnte nicht geändert werden",
-  "eventUpdated": "Reservation geändert"
-
+  "eventUpdated": "Reservation geändert",
+  "eventRemoved": "Reservation erfolgreich gelöscht",
+  "cannotRemoveEvent": "Reservation konnte nicht gelöscht werden",
+  "eventAdded": "Reservation hinzugefügt",
+  "userUpdated": "Benutzer gändert",
+  "userRemoved": "Benutzer erfolgreich gelöscht",
+  "sessionExpired": "Deine Session ist abgelaufen. Bitte melde dich erneut an",
+  "registrationSuccess": "Registrierung erfolgreich!<br/>Du wirst eine E-Mail mit weiteren Informationen erhalten",
+  "loginSuccess": "Anmeldung erfolgreich success",
+  "hello": "Hallo",
+  "cannotLoadUsers": "Benutzer können nicht geladen werden",
+  "loginToSeeUsers": "Bitte logge dich erneut ein um auf diese Seite zuzugreifen",
+  "pleaseTryAgain": "Bitte versuche es erneut oder kontaktiere den Administrator",
+  "cannotAddEvent": "Reservation konnte nicht erstellt werden",
+  "cannotUpdateUser": "Benutzer konnte nicht geändert werden",
+  "cannotRemoveUser": "Benutzer konnte nicht gelöscht werden",
+  "registrationFailed": "Registration fehlgeschlagen",
+  "unknownLoginFailure": "Ein unbekannter Fehler ist aufgetreten<br/>Bitte versuche es erneut oder kontaktiere den Administrator",
+  "formErrors": "<strong>Bitte überprüfe deine Eingaben</strong><br/>Es gibt fehlerhafte Felder in der Eingabemaske.",
+  "11": "Das Enddatum kann nicht vor dem Startdatum liegen",
+  "14": "Du bist nicht berechtigt auf diese Seite zuzugreifen"
 }

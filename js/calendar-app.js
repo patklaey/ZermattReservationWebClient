@@ -128,7 +128,7 @@ myAppModule.directive("datepicker", function ($rootScope) {
     }
 });
 
-myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, $http, $sce, ngToast, $timeout, $cookies, CONFIG, COOKIE_KEYS, spinnerService) {
+myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, $http, $sce, ngToast, $timeout, $cookies, CONFIG, COOKIE_KEYS, spinnerService, $translate) {
     'use strict';
     $scope.changeMode = function (mode) {
         $scope.mode = mode;
@@ -144,7 +144,9 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
             .then(function(response) {
                 $scope.displayEvents(response.data);
             }, function() {
-                $scope.showErrorToast("Cannot load reservations, please try again later!");
+                $translate('cannotLoadEvents').then(function (text) {
+                    $scope.showErrorToast(text);
+                });
             }
         );
     };
@@ -216,17 +218,22 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         spinnerService.show('editReservationSpinner');
         $http.put(CONFIG.API_ENDPOINT + '/reservations/' + $scope.currentEvent.id,JSON.stringify(eventToUpdate), {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function() {
-                    $scope.showInfoToast("Event updated!");
-                    $rootScope.$broadcast('event-source-changed');
-                    $scope.showReservationModal.close();
+                $translate('eventUpdated').then(function (text) {
+                    $scope.showInfoToast(text);
+                });
+                $rootScope.$broadcast('event-source-changed');
+                $scope.showReservationModal.close();
             })
             .catch(function(response) {
-                if( response ){
-                    $scope.showErrorToast("Could not update event:<br>" + response.status + ": " + response.data.error + "!");
-                }
-                else{
-                    $scope.showErrorToast("Could not update event!");
-                }
+                $translate('cannotUpdateEvent').then(function (text) {
+                    if( response.data.error.code ){
+                        $translate(response.data.error.code).then(function (errorCodeTranslation) {
+                            $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                        });
+                    } else {
+                        $scope.showErrorToast(text + "!");
+                    }
+                });
             })
             .finally(function () {
                 spinnerService.hide('editReservationSpinner');
@@ -244,18 +251,23 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
         spinnerService.show('deleteReservationSpinner');
         $http.delete(CONFIG.API_ENDPOINT + '/reservations/' + reservationId, {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function(response) {
-                $scope.showInfoToast("Event successfully removed!");
+                $translate('eventRemoved').then(function (text) {
+                    $scope.showInfoToast(text);
+                });
                 $scope.showReservationModal.close();
                 $scope.removeEventLocally(reservationId);
                 $rootScope.$broadcast('event-source-changed');
             })
             .catch(function(response) {
-                if( response ){
-                    $scope.showErrorToast("Could not remove reservation:<br>" + response.status + ": " + response.data.error + "!");
-                }
-                else{
-                    $scope.showErrorToast("Could not remove reservation!");
-                }
+                $translate('cannotRemoveEvent').then(function (text) {
+                    if( response.data.error.code ){
+                        $translate(response.data.error.code).then(function (errorCodeTranslation) {
+                            $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                        });
+                    } else {
+                        $scope.showErrorToast(text + "!");
+                    }
+                });
             })
             .finally(function () {
                 spinnerService.hide('deleteReservationSpinner');
@@ -298,18 +310,23 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
             .success(function(response) {
                 event.id = response.id;
                 event.userId = response.userId;
-                $scope.showInfoToast("Event added!");
+                $translate('eventAdded').then(function (text) {
+                    $scope.showInfoToast(text + "!");
+                });
                 $rootScope.reservationModal.close("Event added");
                 $scope.addEventLocally(event);
                 $rootScope.$broadcast('event-source-changed');
             })
             .catch(function(response) {
-                if( response ){
-                    $scope.showErrorToast("Could not add reservation:<br>" + response.status + ": " + response.data.error + "!");
-                }
-                else{
-                    $scope.showErrorToast("Could not add reservation!");
-                }
+                $translate('cannotAddEvent').then(function (text) {
+                    if( response.data.error.code ){
+                        $translate(response.data.error.code).then(function (errorCodeTranslation) {
+                            $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                        });
+                    } else {
+                        $scope.showErrorToast(text + "!");
+                    }
+                });
             })
             .finally(function () {
                 spinnerService.hide('addReservationSpinner');
@@ -358,7 +375,9 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
     });
 
     $scope.$on('invalid-form-event', function(){
-        $scope.showWarningToast("<strong>Please review your inputs</strong><br/>There are some errors in the form.");
+        $translate('formErrors').then(function (text) {
+            $scope.showWarningToast(text + "!");
+        });
     });
 
     $scope.$on('double-clicked-calendar', function () {
@@ -396,14 +415,19 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 
         $http.put(CONFIG.API_ENDPOINT + '/users/' + userId, JSON.stringify(newUser), {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .then(function() {
-                $scope.showInfoToast("User updated!");
+                $translate('userUpdated').then(function (text) {
+                    $scope.showInfoToast(text + "!");
+                });
             }, function(response) {
-                if( response ){
-                    $scope.showErrorToast("Could not update user:<br>" + response.status + ": " + response.data.error + "!");
-                }
-                else{
-                    $scope.showErrorToast("Could not update user!");
-                }
+                $translate('cannotUpdateUser').then(function (text) {
+                    if( response.data.error.code ){
+                        $translate(response.data.error.code).then(function (errorCodeTranslation) {
+                            $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                        });
+                    } else {
+                        $scope.showErrorToast(text + "!");
+                    }
+                });
             }
         );
     };
@@ -411,16 +435,21 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
     $scope.deleteUser = function(){
         $http.delete(CONFIG.API_ENDPOINT + '/users/' + $scope.user.id, {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
             .success(function(response) {
-                $scope.showInfoToast("User successfully removed!");
+                $translate('userRemoved').then(function (text) {
+                    $scope.showInfoToast(text + "!");
+                });
                 location.reload();
             })
             .catch(function(response) {
-                if( response ){
-                    $scope.showErrorToast("Could not remove user:<br>" + response.status + ": " + response.data.error + "!");
-                }
-                else{
-                    $scope.showErrorToast("Could not remove user!");
-                }
+                $translate('cannotRemoveUser').then(function (text) {
+                    if( response.data.error.code ){
+                        $translate(response.data.error.code).then(function (errorCodeTranslation) {
+                            $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                        });
+                    } else {
+                        $scope.showErrorToast(text + "!");
+                    }
+                });
             });
 //            .finally(function () {
 //                spinnerService.hide('deleteReservationSpinner');
@@ -466,7 +495,9 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             if ( ! exp || now.isAfter(exp) ) {
                 if( $cookies.getObject(COOKIE_KEYS.AUTHENTICATED)){
                     $scope.logout();
-                    $scope.showWarningToast("Your session expired! Please login again!")
+                    $translate('sessionExpired').then(function (text) {
+                        $scope.showWarningToast(text + "!");
+                    });
                 }
             } else {
                 $rootScope.currentUser = {
@@ -543,19 +574,21 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 
         $http.post(CONFIG.API_ENDPOINT + '/users',JSON.stringify(user))
             .success(function() {
-                ngToast.create({
-                    timeout: 10000,
-                    content: $sce.trustAsHtml("Registration success!<br/>You should have received a mail with further information")
+                $translate('registrationSuccess').then(function (text) {
+                    $scope.showInfoToast(text);
                 });
                 $rootScope.registerModal.close();
             })
             .catch(function(response) {
-                if( response ){
-                    $scope.showErrorToast("Registration failed:<br/>" + response.status + ": " + response.data.error + "!");
-                }
-                else{
-                    $scope.showErrorToast("Registration failed!");
-                }
+                $translate('registrationFailed').then(function (text) {
+                    if( response.data.error.code ){
+                        $translate(response.data.error.code).then(function (errorCodeTranslation) {
+                            $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                        });
+                    } else {
+                        $scope.showErrorToast(text + "!");
+                    }
+                });
             })
             .finally(function() {
                 spinnerService.hide('registerSpinner');
@@ -595,8 +628,12 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 if(response.data && response.data.token) {
                     $scope.loginFailed = false;
                     $scope.setupUser(response.data.token);
-                    ngToast.create("<strong>Login success!</strong><br/>Hello " + $rootScope.currentUser.username);
-                    $rootScope.loginModal.close("Successful login");
+                    $translate('loginSuccess').then(function (loginText) {
+                        $translate('hello').then(function (text) {
+                            $scope.showInfoToast("<strong>" + loginText + "!</strong><br/>" + text + " " + $rootScope.currentUser.username);
+                            $rootScope.loginModal.close("Successful login");
+                        });
+                    });
                 }
                 spinnerService.hide('loginSpinner');
             }, function(response) {
@@ -604,10 +641,14 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     if( response.status === 401 ) {
                         $scope.loginFailed = true;
                     } else {
-                        $scope.showErrorToast("Login Failed:<br/>" + response.data + "!");
+                        $translate('loginFailed').then(function (text) {
+                            $scope.showErrorToast(text + "<br/> " + response.data);
+                        });
                     }
                 } else {
-                    $scope.showErrorToast("An unknown error occured<br/>Please try again later or contact the administrator.");
+                    $translate('unknownLoginFailure').then(function (text) {
+                        $scope.showErrorToast(text + "<br/> " + response.data);
+                    });
                 }
                 spinnerService.hide('loginSpinner');
             }
@@ -628,6 +669,10 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $cookies.putObject(COOKIE_KEYS.IS_ADMIN, payload.user_claims.admin);
         $cookies.putObject(COOKIE_KEYS.EXPIRE_DATE, moment.unix(payload.exp));
         $cookies.putObject(COOKIE_KEYS.CSRF_TOKEN, payload.csrf);
+    };
+
+    $scope.showInfoToast = function(message) {
+        ngToast.create(message);
     };
 
     $scope.showErrorToast = function(message){
@@ -674,14 +719,21 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                         .then(function(response) {
                             $rootScope.allUsers = response.data;
                         }, function(response) {
-                            if( response.data.error ){
-                                $scope.showErrorToast("<strong>Cannot load users</strong><br/>" + response.data.error);
-                            } else if( response.data.msg ){
-                                $scope.showErrorToast("<strong>Cannot load users</strong><br/>Please login again to access this page");
-                            } else {
-                                $scope.showErrorToast("<strong>Cannot load users</strong><br/>Please try again or contact the administrator");
-                            }
                             $location.path("/");
+                            $translate('cannotLoadUsers').then(function (cannotLoadUsersText) {
+                                if( response.data.error.code ){
+                                    $translate(response.data.error.code).then(function (text) {
+                                        $scope.showErrorToast("<strong>" + cannotLoadUsersText + "</strong><br/>" + text);
+                                    });                                } else if( response.data.msg ){
+                                    $translate('loginToSeeUsers').then(function (text) {
+                                        $scope.showErrorToast("<strong>" + cannotLoadUsersText + "</strong><br/>" + text);
+                                    });
+                                } else {
+                                    $translate('pleaseTryAgain').then(function (text) {
+                                        $scope.showErrorToast("<strong>" + cannotLoadUsersText + "</strong><br/>" + text);
+                                    });
+                                }
+                            });
                         }
             );
         }
