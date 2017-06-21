@@ -420,13 +420,13 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
                 });
             }, function(response) {
                 $translate('cannotUpdateUser').then(function (text) {
-                    if( response.data.error.code ){
-                        $translate(response.data.error.code).then(function (errorCodeTranslation) {
-                            $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
-                        });
-                    } else {
+                    //if( response.data.error.code ){
+                    //    $translate("16").then(function (errorCodeTranslation) {
+                    //        $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                    //    });
+                    //} else {
                         $scope.showErrorToast(text + "!");
-                    }
+                    //} Somehow the block above not working, check why!
                 });
             }
         );
