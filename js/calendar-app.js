@@ -11,7 +11,8 @@ configModule.constant("COOKIE_KEYS", {
     "IS_ADMIN": "isAdmin",
     "USERID": "userId",
     "EXPIRE_DATE": "expireDate",
-    "CSRF_TOKEN": "csrfToken"
+    "CSRF_TOKEN": "csrfToken",
+    "LANGUAGE": "language"
 });
 
 var myAppModule = angular.module('App', ['ui.rCalendar', 'ngToast', 'ui.bootstrap', 'ngMaterial', 'ngMessages', 'ngCookies', 'ngRoute', 'angularSpinners', 'configModule', 'pascalprecht.translate']);
@@ -126,6 +127,10 @@ myAppModule.directive("datepicker", function ($rootScope) {
             });
         }
     }
+});
+
+myAppModule.run(function($translate, $cookies, COOKIE_KEYS) {
+    $translate.use($cookies.getObject(COOKIE_KEYS.LANGUAGE));
 });
 
 myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, $http, $sce, ngToast, $timeout, $cookies, CONFIG, COOKIE_KEYS, spinnerService, $translate) {
@@ -711,6 +716,11 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
 
     $scope.showAddReservationButton = function(){
         return $scope.isAuthenticated() && $location.path() !== "/users";
+    };
+
+    $scope.useLanguage = function(langKey) {
+        $translate.use(langKey);
+        $cookies.putObject(COOKIE_KEYS.LANGUAGE, langKey);
     };
 
     $scope.$on("$routeChangeSuccess", function($currentRoute, $previousRoute) {

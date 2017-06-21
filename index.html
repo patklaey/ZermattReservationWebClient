@@ -70,6 +70,13 @@
                     <li><a href="#" role="button" ng-cloak ng-show="showCalendarButton()">{{ 'calendar' | translate }}</a></li>
                     <li><a href="" role="button" ng-cloak ng-show="!isAuthenticated()" ng-click="showLogin()">{{ 'login' | translate }}</a></li>
                     <li><a href="" role="button" ng-cloak ng-show="!isAuthenticated()" ng-click="showRegister()">{{ 'register' | translate }}</a></li>
+                    <li class="dropdown" ng-cloak ng-show="!isAuthenticated()">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="./resources/de_en.jpg" width="20px" height="20px"><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a role="button" href="" ng-click='useLanguage("en")'>English</a></li>
+                            <li><a role="button" href="" ng-click='useLanguage("de")'>Deutsch</a></li>
+                        </ul>
+                    </li>
                     <li class="dropdown" ng-cloak ng-show="isAuthenticated()">
                         <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{currentUser.username}}<span class="caret"></span></a>
                         <ul class="dropdown-menu">
