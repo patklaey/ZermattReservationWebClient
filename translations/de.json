@@ -55,7 +55,7 @@
   "userRemoved": "Benutzer erfolgreich gelöscht",
   "sessionExpired": "Deine Session ist abgelaufen. Bitte melde dich erneut an",
   "registrationSuccess": "Registrierung erfolgreich!<br/>Du wirst eine E-Mail mit weiteren Informationen erhalten",
-  "loginSuccess": "Anmeldung erfolgreich success",
+  "loginSuccess": "Anmeldung erfolgreich",
   "hello": "Hallo",
   "cannotLoadUsers": "Benutzer können nicht geladen werden",
   "loginToSeeUsers": "Bitte logge dich erneut ein um auf diese Seite zuzugreifen",

@@ -391,7 +391,7 @@ myAppModule.controller('CalendarCtrl', function ($scope, $rootScope, $uibModal, 
 });
 
 
-myAppModule.controller('userController', function($scope, $rootScope, $http, $sce, ngToast, CONFIG, COOKIE_KEYS, $cookies) {
+myAppModule.controller('userController', function($scope, $rootScope, $http, $sce, ngToast, CONFIG, COOKIE_KEYS, $cookies, $translate) {
 
     $scope.updateUser = function() {
         var userId = $scope.user.id;
@@ -481,7 +481,7 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
 });
 
 
-myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService) {
+myAppModule.controller('headerController', function($scope, $uibModal, $rootScope, $http, ngToast, $sce, CONFIG, $cookies, COOKIE_KEYS, $location, spinnerService, $translate) {
 
     $rootScope.$on('logout-event', function(){
         $scope.logout();
@@ -628,10 +628,10 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 if(response.data && response.data.token) {
                     $scope.loginFailed = false;
                     $scope.setupUser(response.data.token);
+                    $rootScope.loginModal.close("Successful login");
                     $translate('loginSuccess').then(function (loginText) {
                         $translate('hello').then(function (text) {
                             $scope.showInfoToast("<strong>" + loginText + "!</strong><br/>" + text + " " + $rootScope.currentUser.username);
-                            $rootScope.loginModal.close("Successful login");
                         });
                     });
                 }
@@ -647,7 +647,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     }
                 } else {
                     $translate('unknownLoginFailure').then(function (text) {
-                        $scope.showErrorToast(text + "<br/> " + response.data);
+                        $scope.showErrorToast(text + "<br/>");
                     });
                 }
                 spinnerService.hide('loginSpinner');
