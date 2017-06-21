@@ -47,7 +47,12 @@
     <script src="./libs/bootstrap-datetimepicker/js/bootstrap-datetimepicker.js"></script>
     <link rel="stylesheet" href="./libs/bootstrap-datetimepicker/css/bootstrap-datetimepicker.css" />
 
+    <!-- spinner-->
     <script src="./libs/angular-spinners-3.1.2/dist/angular-spinners.min.js"></script>
+
+    <!-- translate -->
+    <script src="./libs/angular-translate/angular-translate.min.js"></script>
+    <script src="./libs/angular-translate/angular-translate-loader-static-files.min.js"></script>
 
 </head>
 <body>
@@ -55,22 +60,29 @@
         <nav class="navbar navbar-default">
             <div class="container container-fluid" ng-controller="headerController" ng-init="initUser()">
                 <div class="navbar-header">
-                    <a class="navbar-brand" href="#">Zermatt Reservations</a>
+                    <a class="navbar-brand" href="#">{{ 'title' | translate }}</a>
                 </div>
                 <ul class="nav navbar-nav">
-                    <li><a href="" role="button" ng-cloak ng-show="showAddReservationButton()" ng-click="showAddReservation()">Add Reservation</a></li>
+                    <li><a href="" role="button" ng-cloak ng-show="showAddReservationButton()" ng-click="showAddReservation()">{{ 'addReservation' | translate }}</a></li>
                 </ul>
                 <ul class="nav navbar-nav navbar-right">
-                    <li><a href="#users" role="button" ng-cloak ng-show="showUsersButton()">Users</a></li>
-                    <li><a href="#" role="button" ng-cloak ng-show="showCalendarButton()">Calendar</a></li>
-                    <li><a href="" role="button" ng-cloak ng-show="!isAuthenticated()" ng-click="showLogin()">Login</a></li>
-                    <li><a href="" role="button" ng-cloak ng-show="!isAuthenticated()" ng-click="showRegister()">Sign Up</a></li>
+                    <li><a href="#users" role="button" ng-cloak ng-show="showUsersButton()">{{ 'users' | translate }}</a></li>
+                    <li><a href="#" role="button" ng-cloak ng-show="showCalendarButton()">{{ 'calendar' | translate }}</a></li>
+                    <li><a href="" role="button" ng-cloak ng-show="!isAuthenticated()" ng-click="showLogin()">{{ 'login' | translate }}</a></li>
+                    <li><a href="" role="button" ng-cloak ng-show="!isAuthenticated()" ng-click="showRegister()">{{ 'register' | translate }}</a></li>
+                    <li class="dropdown" ng-cloak ng-show="!isAuthenticated()">
+                        <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><img src="./resources/de_en.jpg" width="20px" height="20px"><span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a role="button" href="" ng-click='useLanguage("en")'>English</a></li>
+                            <li><a role="button" href="" ng-click='useLanguage("de")'>Deutsch</a></li>
+                        </ul>
+                    </li>
                     <li class="dropdown" ng-cloak ng-show="isAuthenticated()">
                         <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{currentUser.username}}<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a role="button" href="#">My Account</a></li>
+                            <li><a role="button" href="#">{{ 'myAccount' | translate }}</a></li>
                             <li role="separator" class="divider"></li>
-                            <li><a role="button" href="" ng-click="logout()">Logout</a></li>
+                            <li><a role="button" href="" ng-click="logout()">{{ 'logout' | translate }}</a></li>
                         </ul>
                     </li>
                 </ul>

@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4>Sign Up</h4>
+    <h4>{{ 'register' | translate}}</h4>
 </div>
 
 <form name="registerForm" ng-submit="register()" novalidate>
@@ -8,55 +8,55 @@
         <div ng-class="{ 'has-error': registerForm.username.$invalid && registerForm.username.$touched }">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                <input id="username" type="text" autofocus class="form-control" name="username" placeholder="Username" ng-unique="{property:'username'}" ng-model="user.username" minlength="3" maxlength="15" required>
+                <input id="username" type="text" autofocus class="form-control" name="username" placeholder="{{ 'username' | translate}}" ng-unique="{property:'username'}" ng-model="user.username" minlength="3" maxlength="15" required>
             </div>
             <div class="help-block" ng-messages="registerForm.username.$error" ng-if="registerForm.username.$touched">
-                <p ng-message="required">Your username is required.</p>
-                <p ng-message="unique">The username is already taken.</p>
-                <p ng-message="minlength">Your username must be at least 3 characters long.</p>
-                <p ng-message="maxlength">Your username cannot be longer than 15 characters.</p>
+                <p ng-message="required">{{ 'usernameRequired' | translate}}</p>
+                <p ng-message="unique">{{ 'usernameTaken' | translate}}</p>
+                <p ng-message="minlength">{{ 'usernameMinLength' | translate}}</p>
+                <p ng-message="maxlength">{{ 'usernameMaxLength' | translate}}</p>
             </div>
 
         </div>
         <div ng-class="{ 'has-error': registerForm.email.$invalid && registerForm.email.$touched }">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-envelope"></i></span>
-                <input id="email" type="email" class="form-control" name="email" ng-unique="{property:'email'}" placeholder="Email" ng-model="user.email" required>
+                <input id="email" type="email" class="form-control" name="email" ng-unique="{property:'email'}" placeholder="{{ 'email' | translate}}" ng-model="user.email" required>
             </div>
             <div class="help-block" ng-messages="registerForm.email.$error" ng-if="registerForm.email.$touched">
-                <p ng-message="required">Your e-mail address is required.</p>
-                <p ng-message="unique">There is already an account registered with this e-mail address.</p>
-                <p ng-message="email">A valid e-mail address is required.</p>
+                <p ng-message="required">{{ 'emailRequired' | translate}}</p>
+                <p ng-message="unique">{{ 'emailTaken' | translate}}</p>
+                <p ng-message="email">{{ 'emailInvalid' | translate}}</p>
             </div>
         </div>
 
         <div ng-class="{ 'has-error': registerForm.password.$invalid && registerForm.password.$touched }">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                <input id="password" type="password" class="form-control" name="password" placeholder="Password" ng-model="user.password" minlength="8" required>
+                <input id="password" type="password" class="form-control" name="password" placeholder="{{ 'password' | translate}}" ng-model="user.password" minlength="8" required>
             </div>
             <div class="help-block" ng-messages="registerForm.password.$error" ng-if="registerForm.password.$touched">
-                <p ng-message="required">A password is required.</p>
-                <p ng-message="minlength">Password needs to be at least 8 characters long.</p>
+                <p ng-message="required">{{ 'passwordRequired' | translate}}</p>
+                <p ng-message="minlength">{{ 'passwordMinLength' | translate}}</p>
             </div>
         </div>
         <div ng-class="{ 'has-error': registerForm.confirmPassword.$invalid && registerForm.confirmPassword.$touched }">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                <input id="confirmPassword" type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" ng-model="user.confirmPassword" compare-to="user.password" required>
+                <input id="confirmPassword" type="password" class="form-control" name="confirmPassword" placeholder="{{ 'confirmPassword' | translate}}" ng-model="user.confirmPassword" compare-to="user.password" required>
             </div>
             <div class="help-block" ng-messages="registerForm.confirmPassword.$error" ng-if="registerForm.confirmPassword.$touched">
-                <p ng-message="required">Please confirm your password.</p>
-                <p ng-message="compareTo">Passwords don't match.</p>
+                <p ng-message="required">{{ 'passwordConfirmationRequired' | translate}}</p>
+                <p ng-message="compareTo">{{ 'passwordMismatch' | translate}}</p>
             </div>
         </div>
         <div style="text-align:center">
-            <spinner name="registerSpinner" img-src="./resources/default.gif">Registering ... </spinner>
+            <spinner name="registerSpinner" img-src="./resources/default.gif">{{ 'registerSpinnerText' | translate}}</spinner>
         </div>
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" ng-click="cancelRegister()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Sign Up</button>
+        <button type="button" class="btn btn-warning" ng-click="cancelRegister()">{{ 'cancel' | translate}}</button>
+        <button type="submit" class="btn btn-primary">{{ 'register' | translate}}</button>
     </div>
 </form>

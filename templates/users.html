@@ -3,12 +3,12 @@
 <body>
     <div class="container">
         <div class="row">
-            <div class="col-md-1">ID</div>
-            <div class="col-md-2">Username</div>
-            <div class="col-md-3">E-Mail</div>
-            <div class="col-md-2">Password</div>
-            <div class="col-md-1">Active</div>
-            <div class="col-md-1">Admin</div>
+            <div class="col-md-1">{{ 'id' | translate}}</div>
+            <div class="col-md-2">{{ 'username' | translate}}</div>
+            <div class="col-md-3">{{ 'email' | translate}}</div>
+            <div class="col-md-2">{{ 'password' | translate}}</div>
+            <div class="col-md-1">{{ 'active' | translate}}</div>
+            <div class="col-md-1">{{ 'admin' | translate}}</div>
             <hr/>
         </div>
         <div ng-controller="userController" ng-repeat="user in allUsers">
@@ -49,12 +49,12 @@
                     </div>
                     <div class="col-md-1">
                         <div class='input-group date form-group'>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                            <button type="submit" class="btn btn-primary">{{ 'save' | translate}}</button>
                         </div>
                     </div>
                     <div class="col-md-1">
                         <div class='input-group date form-group'>
-                            <button type="button" class="btn btn-danger" ng-click="deleteUser()">Delete</button>
+                            <button type="button" class="btn btn-danger" ng-click="deleteUser()">{{ 'delete' | translate}}</button>
                         </div>
                     </div>
                 </form>

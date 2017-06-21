@@ -1,5 +1,5 @@
 <div class="modal-header">
-    <h4>Login</h4>
+    <h4>{{ 'login' | translate}}</h4>
 </div>
 
 <form name="loginForm" ng-submit="authenticate()" novalidate>
@@ -8,31 +8,31 @@
         <div  ng-class="{ 'has-error': loginForm.username.$invalid && loginForm.username.$touched}">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-user"></i></span>
-                <input id="username" type="text" autofocus class="form-control" name="username" placeholder="Username" ng-model="username" required>
+                <input id="username" type="text" autofocus class="form-control" name="username" placeholder="{{ 'username' | translate}}" ng-model="username" required>
             </div>
             <div class="help-block" ng-messages="loginForm.username.$error" ng-if="loginForm.username.$touched">
-                <p ng-message="required">Your username is required.</p>
+                <p ng-message="required">{{ 'usernameRequired' | translate}}</p>
             </div>
         </div>
         <div ng-class="{ 'has-error': loginForm.password.$invalid && loginForm.password.$touched}">
             <div class="input-group form-group">
                 <span class="input-group-addon"><i class="glyphicon glyphicon-lock"></i></span>
-                <input id="password" type="password" class="form-control" name="password" placeholder="Password" ng-model="password" required>
+                <input id="password" type="password" class="form-control" name="password" placeholder="{{ 'password' | translate}}" ng-model="password" required>
             </div>
             <div class="help-block" ng-messages="loginForm.password.$error" ng-if="loginForm.password.$touched">
-                <p ng-message="required">Password is required.</p>
+                <p ng-message="required">{{ 'passwordRequired' | translate}}.</p>
             </div>
         </div>
         <div class="alert alert-danger" ng-show="loginFailed">
-            <strong>Login failed!</strong> Wrong username or password.
+            <strong>{{ 'loginFailed' | translate}}:</strong> {{ 'wrongUsernamePassword' | translate}}
         </div>
         <div style="text-align:center">
-            <spinner name="loginSpinner" img-src="./resources/default.gif">Logging in ... </spinner>
+            <spinner name="loginSpinner" img-src="./resources/default.gif">{{ 'loginSpinnerText' | translate}} </spinner>
         </div>
     </div>
 
     <div class="modal-footer">
-        <button type="button" class="btn btn-warning" ng-click="cancelLogin()">Cancel</button>
-        <button type="submit" class="btn btn-primary">Login</button>
+        <button type="button" class="btn btn-warning" ng-click="cancelLogin()">{{ 'cancel' | translate}}</button>
+        <button type="submit" class="btn btn-primary">{{ 'login' | translate}}</button>
     </div>
 </form>
