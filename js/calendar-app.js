@@ -572,7 +572,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         var user = {
             username: $scope.user.username,
             password: $scope.user.password,
-            email: $scope.user.email
+            email: $scope.user.email,
+            language: $scope.user.language
         };
 
         spinnerService.show('registerSpinner');
@@ -634,6 +635,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                     $scope.loginFailed = false;
                     $scope.setupUser(response.data.token);
                     $rootScope.loginModal.close("Successful login");
+
                     $translate('loginSuccess').then(function (loginText) {
                         $translate('hello').then(function (text) {
                             $scope.showInfoToast("<strong>" + loginText + "!</strong><br/>" + text + " " + $rootScope.currentUser.username);
@@ -668,6 +670,7 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
             id: payload.user_claims.userId,
             isAdmin: payload.user_claims.admin
         };
+        $scope.useLanguage(payload.user_claims.language);
         $cookies.putObject(COOKIE_KEYS.USERNAME, payload.user_claims.username);
         $cookies.putObject(COOKIE_KEYS.USERID, payload.user_claims.userId);
         $cookies.putObject(COOKIE_KEYS.AUTHENTICATED,true);

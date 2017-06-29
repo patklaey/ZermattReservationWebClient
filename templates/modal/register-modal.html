@@ -50,6 +50,15 @@
                 <p ng-message="compareTo">{{ 'passwordMismatch' | translate}}</p>
             </div>
         </div>
+        <div>
+            <div class="input-group form-group">
+                <span class="input-group-addon"><img src="../../resources/de_en.jpg" width="20px" height="20px"></span>
+                <select name="language" id="language" ng-model="user.language" class="form-control" ng-init="user.language = 'de'">
+                    <option value="de">Deutsch</option>
+                    <option value="en">English</option>
+                </select>
+            </div>
+        </div>
         <div style="text-align:center">
             <spinner name="registerSpinner" img-src="./resources/default.gif">{{ 'registerSpinnerText' | translate}}</spinner>
         </div>
