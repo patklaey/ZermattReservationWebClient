@@ -66,6 +66,11 @@
   "registrationFailed": "Registration failed",
   "unknownLoginFailure": "An unknown error occured<br/>Please try again later or contact the administrator",
   "formErrors": "<strong>Please review your inputs</strong><br/>There are some errors in the form.",
+  "oldPassword": "Current password",
+  "oldPasswordRequired": "Current password is required",
+  "changePassword": "Change Password",
+  "changeLanguage": "Change Language",
+  "updateUserSpinnerText": "Updating user ...",
   "1": "Reservation not found",
   "2": "Missing required attribute",
   "3": "Invalid date format for startTime",
@@ -79,11 +84,14 @@
   "11": "End date cannot be before start date",
   "12": "Invalid date format",
   "13": "Failed to update reservation",
-  "14": "You are not allowed to access this page",
+  "14": "You are not allowed to execute this operation",
   "15": "Failed to delete reservation",
   "16": "User not found",
   "17": "Failed to update user",
   "18": "Cannot delete user",
   "19": "\"key\" and \"value\" must be given as query parameters",
-  "20": "This \"key\" is not allowed"
+  "20": "This \"key\" is not allowed",
+  "21": "Current password must be provided as \"oldPassword\" within the request body",
+  "22": "The current password is not correct",
+  "23": "It is not allowed to change protected attributes"
 }

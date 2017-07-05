@@ -456,9 +456,6 @@ myAppModule.controller('userController', function($scope, $rootScope, $http, $sc
                     }
                 });
             });
-//            .finally(function () {
-//                spinnerService.hide('deleteReservationSpinner');
-//            });
     };
 
     $scope.showInfoToast = function(message) {
@@ -492,6 +489,69 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $scope.logout();
     });
 
+    $scope.showMyAccount = function () {
+        $scope.myUser = {};
+        $scope.myUser.username = $rootScope.currentUser.username;
+        $scope.myUser.id = $rootScope.currentUser.id;
+        $scope.myUser.language = $rootScope.currentUser.language;
+        $scope.showMyAccountModal = $uibModal.open({
+            templateUrl: "./templates/modal/my-account-modal",
+            scope: $scope
+        });
+    };
+
+    $scope.cancelUpdateMyAccount = function () {
+        if($scope.showMyAccountModal){
+            $scope.showMyAccountModal.dismiss("User canceled");
+        }
+    };
+
+    $scope.updateMyUser = function () {
+        if( $scope.myUser.password || $scope.myUser.oldPassword || $scope.myUser.confirmPassword ) {
+            angular.forEach(this.myUserForm.$error.required, function(field) {
+                field.$setTouched();
+            });
+
+            if (this.myUserForm.$invalid){
+                $rootScope.$broadcast("invalid-form-event");
+                return;
+            }
+        }
+
+        var userToUpdate = {};
+        userToUpdate.language = $scope.myUser.language;
+
+        if( $scope.myUser.password ) {
+            userToUpdate.password = $scope.myUser.password;
+            userToUpdate.oldPassword = $scope.myUser.oldPassword;
+        }
+
+        spinnerService.show('updateMyUserSpinner');
+
+        $http.put(CONFIG.API_ENDPOINT + '/users/' + $scope.myUser.id, JSON.stringify(userToUpdate), {headers: {"X-CSRF-TOKEN": $cookies.get(COOKIE_KEYS.CSRF_TOKEN)}})
+            .then(function() {
+                $translate.use(userToUpdate.language);
+                $rootScope.currentUser.language = userToUpdate.language;
+                $translate('userUpdated').then(function (text) {
+                        $scope.showInfoToast(text + "!");
+                    });
+                $scope.showMyAccountModal.close("Successful update");
+                spinnerService.hide('updateMyUserSpinner');
+                }, function(response) {
+                    $translate('cannotUpdateUser').then(function (text) {
+                        if( response.data.error.code ){
+                            $translate(response.data.error.code).then(function (errorCodeTranslation) {
+                                $scope.showErrorToast("<strong>" + text + "</strong><br/>" + errorCodeTranslation + "!");
+                            });
+                        } else {
+                            $scope.showErrorToast(text + "!");
+                        }
+                    });
+                    spinnerService.hide('updateMyUserSpinner');
+                }
+            );
+    };
+
     $scope.initUser = function () {
         try {
             var exp = $cookies.getObject(COOKIE_KEYS.EXPIRE_DATE);
@@ -508,7 +568,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
                 $rootScope.currentUser = {
                     username: $cookies.getObject(COOKIE_KEYS.USERNAME),
                     id: $cookies.getObject(COOKIE_KEYS.USERID),
-                    isAdmin: $cookies.getObject(COOKIE_KEYS.IS_ADMIN)
+                    isAdmin: $cookies.getObject(COOKIE_KEYS.IS_ADMIN),
+                    language: $cookies.getObject(COOKIE_KEYS.LANGUAGE)
                 };
             }
             $rootScope.selectedDate = new Date();
@@ -668,7 +729,8 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $rootScope.currentUser = {
             username: payload.user_claims.username,
             id: payload.user_claims.userId,
-            isAdmin: payload.user_claims.admin
+            isAdmin: payload.user_claims.admin,
+            language: payload.user_claims.language
         };
         $scope.useLanguage(payload.user_claims.language);
         $cookies.putObject(COOKIE_KEYS.USERNAME, payload.user_claims.username);

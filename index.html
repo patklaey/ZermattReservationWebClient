@@ -80,7 +80,7 @@
                     <li class="dropdown" ng-cloak ng-show="isAuthenticated()">
                         <a href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{currentUser.username}}<span class="caret"></span></a>
                         <ul class="dropdown-menu">
-                            <li><a role="button" href="#">{{ 'myAccount' | translate }}</a></li>
+                            <li><a role="button" href="" ng-click="showMyAccount()">{{ 'myAccount' | translate }}</a></li>
                             <li role="separator" class="divider"></li>
                             <li><a role="button" href="" ng-click="logout()">{{ 'logout' | translate }}</a></li>
                         </ul>

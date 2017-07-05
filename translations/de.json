@@ -66,6 +66,11 @@
   "registrationFailed": "Registration fehlgeschlagen",
   "unknownLoginFailure": "Ein unbekannter Fehler ist aufgetreten<br/>Bitte versuche es erneut oder kontaktiere den Administrator",
   "formErrors": "<strong>Bitte überprüfe deine Eingaben</strong><br/>Es gibt fehlerhafte Felder in der Eingabemaske.",
+  "oldPassword": "Aktuelles Passwort",
+  "oldPasswordRequired": "Aktuelles Passwort wird benötigt",
+  "changePassword": "Passwort ändern",
+  "changeLanguage": "Sprache ändern",
+  "updateUserSpinnerText": "Benutzer wird geändert ...",
   "1": "Reservation nicht gefunden",
   "2": "Benötigtes Attribut nicht vorhanden",
   "3": "Ungültiges Format für startTime",
@@ -79,11 +84,14 @@
   "11": "Das Enddatum kann nicht vor dem Startdatum liegen",
   "12": "Ungültiges Format für Datum",
   "13": "Reservation konnte nicht geändert werden",
-  "14": "Du bist nicht berechtigt auf diese Seite zuzugreifen",
+  "14": "Du bist nicht berechtigt diese Operation auszuführen",
   "15": "Reservation konnte nicht gelöscht werden",
   "16": "Benutzer nicht gefunden",
   "17": "Benutzer konnte nicht geändert werden",
   "18": "Benutzer konnte nicht gelöscht werden",
   "19": "\"key\" und \"value\" müssen als query Parameter vorhanden sein",
-  "20": "Dieser \"key\" ist nicht erlaubt"
+  "20": "Dieser \"key\" ist nicht erlaubt",
+  "21": "Das aktuelle Passwort muss als \"oldPassword\" im request body vorhanden sein",
+  "22": "Das aktuelle Passwort ist nicht korrekt",
+  "23": "Es ist nicht erlaubt geschützte Attribute zu ändern"
 }
