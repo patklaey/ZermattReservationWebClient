@@ -71,6 +71,7 @@
   "changePassword": "Change Password",
   "changeLanguage": "Change Language",
   "updateUserSpinnerText": "Updating user ...",
+  "noReservations": "Currently no reservations",
   "1": "Reservation not found",
   "2": "Missing required attribute",
   "3": "Invalid date format for startTime",
