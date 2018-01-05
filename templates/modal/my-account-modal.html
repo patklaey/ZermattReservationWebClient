@@ -13,6 +13,16 @@
         </div>
         <div>
             <hr/>
+            <p>{{ 'nextReservation' | translate }}:</p>
+        </div>
+        <div>
+            <div class="input-group form-group">
+                <span class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span>
+                <input id="nextReservation" type="text" class="form-control" name="nextReservation" ng-model="nextReservation" readonly>
+            </div>
+        </div>
+        <div>
+            <hr/>
             <p>{{ 'changePassword' | translate }}:</p>
         </div>
         <div ng-class="{ 'has-error': myUserForm.oldPassword.$invalid && myUserForm.oldPassword.$touched}">

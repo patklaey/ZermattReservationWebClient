@@ -72,6 +72,7 @@
   "changeLanguage": "Sprache ändern",
   "updateUserSpinnerText": "Benutzer wird geändert ...",
   "noReservations": "Aktuell keine Reservationen",
+  "nextReservation": "Deine nächste Reservation",
   "1": "Reservation nicht gefunden",
   "2": "Benötigtes Attribut nicht vorhanden",
   "3": "Ungültiges Format für startTime",

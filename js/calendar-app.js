@@ -1,7 +1,7 @@
 var configModule = angular.module('configModule', []);
 
 configModule.constant("CONFIG", {
-    "API_ENDPOINT": "http://localhost:5000",
+    "API_ENDPOINT": "https://zermatt-api.pat.ch",
     "CSRF_HEADER_NAME": "X-CSRF-TOKEN"
 });
 
@@ -494,10 +494,32 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $scope.myUser.username = $rootScope.currentUser.username;
         $scope.myUser.id = $rootScope.currentUser.id;
         $scope.myUser.language = $rootScope.currentUser.language;
-        $scope.showMyAccountModal = $uibModal.open({
-            templateUrl: "./templates/modal/my-account-modal",
-            scope: $scope
-        });
+
+        $http.get(CONFIG.API_ENDPOINT + '/users/' + $rootScope.currentUser.id + '/nextReservation')
+            .then(function(response) {
+
+                var nextReservationStart = response.data.startTime;
+                var nextReservationEnd = response.data.endTime;
+                if( ! nextReservationEnd || ! nextReservationStart ){
+                    $translate('noReservations').then(function (text) {
+                        $scope.nextReservation = text;
+                    });
+                } else {
+                    $scope.nextReservation = nextReservationStart + " - " + nextReservationEnd;
+                }
+
+                $scope.showMyAccountModal = $uibModal.open({
+                    templateUrl: "./templates/modal/my-account-modal.html",
+                    scope: $scope
+                });
+
+            }, function(response) {
+                $scope.showMyAccountModal = $uibModal.open({
+                    templateUrl: "./templates/modal/my-account-modal.html",
+                    scope: $scope
+                });
+            }
+        );
     };
 
     $scope.cancelUpdateMyAccount = function () {
