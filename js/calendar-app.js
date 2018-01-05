@@ -498,15 +498,15 @@ myAppModule.controller('headerController', function($scope, $uibModal, $rootScop
         $http.get(CONFIG.API_ENDPOINT + '/users/' + $rootScope.currentUser.id + '/nextReservation')
             .then(function(response) {
 
-                var nextReservationStart = moment(response.data.startTime);
-                var nextReservationEnd = moment(response.data.endTime);
+                var nextReservationStart = response.data.startTime;
+                var nextReservationEnd = response.data.endTime;
                 if( ! nextReservationEnd || ! nextReservationStart ){
                     $translate('noReservations').then(function (text) {
                         $scope.nextReservation = text;
                     });
                 } else {
                     var format = "DD.MM.YYYY HH:mm";
-                    $scope.nextReservation = nextReservationStart.format(format) + " - " + nextReservationEnd.format(format);
+                    $scope.nextReservation = moment(nextReservationStart).format(format) + " - " + moment(nextReservationEnd).format(format);
                 }
 
                 $scope.showMyAccountModal = $uibModal.open({
